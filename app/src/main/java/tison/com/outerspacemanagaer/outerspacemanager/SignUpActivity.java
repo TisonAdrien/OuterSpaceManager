@@ -24,6 +24,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     private EditText inputUsername;
     private EditText inputPassword;
     private Button btnCreate;
+    private String token;
 
     public static final String PREFS_NAME = "TOKEN_FILE";
 
@@ -43,6 +44,15 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
 
         btnCreate.setOnClickListener(this);
         btnValider.setOnClickListener(this);
+
+        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+        token = settings.getString("token","");
+
+        if(token != ""){
+            Intent myIntent = new Intent(getApplicationContext(), MainActivity.class);
+            startActivity(myIntent);
+        }
+
     }
 
     @Override
@@ -56,18 +66,17 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                 @Override
                 public void onResponse(Call<AuthResponse> call, Response<AuthResponse> response) {
                     if(response.code() != 200){
-                        try {
-                            Toast.makeText(getApplicationContext(), response.errorBody().string(), Toast.LENGTH_LONG).show();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+                        Toast.makeText(getApplicationContext(), "Identifiant ou mot de passe incorrecte", Toast.LENGTH_LONG).show();
                     }else{
-                        Toast.makeText(getApplicationContext(), response.body().getToken(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "Connection...", Toast.LENGTH_LONG).show();
                         SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
                         SharedPreferences.Editor editor = settings.edit();
                         editor.putString("token", response.body().getToken());
                         // Commit the edits!
                         editor.commit();
+
+                        Intent myIntent = new Intent(getApplicationContext(), MainActivity.class);
+                        startActivity(myIntent);
                     }
                 }
 

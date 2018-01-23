@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="tison.com.outerspacemanagaer.outerspacemanager.MainActivity">
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="20dp"
+        />
+
+    <TextView
+        android:id="@+id/textViewUsername"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:textSize="30dp"
+        android:text="USERNAME" />
+
+    <TextView
+        android:id="@+id/textViewScore"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:text="Points : 0" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="40dp"
+        />
+
+    <Button
+        android:id="@+id/buttonGeneral"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/general_view" />
+
+    <Button
+        android:id="@+id/buttonBuilding"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/building" />
+
+    <Button
+        android:id="@+id/buttonFlotte"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/flotte" />
+
+    <Button
+        android:id="@+id/buttonSearch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/research" />
+
+    <Button
+        android:id="@+id/buttonChantier"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/chantier" />
+
+    <Button
+        android:id="@+id/buttonGalaxy"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/galaxy" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="20dp"
+        />
+
+    <Button
+        android:id="@+id/buttonDisconnect"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/disconnect" />
+</LinearLayout>

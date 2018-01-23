@@ -51,13 +51,16 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
                 @Override
                 public void onResponse(Call<AuthResponse> call, Response<AuthResponse> response) {
                     if(response.code() != 200){
+                        Toast.makeText(getApplicationContext(), "L'utilisateur existe déjà !", Toast.LENGTH_LONG).show();
+                        /*
                         try {
                             Toast.makeText(getApplicationContext(), response.errorBody().string(), Toast.LENGTH_LONG).show();
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
+                        */
                     }else{
-                        Toast.makeText(getApplicationContext(), response.body().toString(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "Votre compte a bien été créé !", Toast.LENGTH_LONG).show();
                     }
                 }
 

@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Outer Space Manager</string>
+    <string name="general_view">Vue générale</string>
+    <string name="building">Bâtiments</string>
+    <string name="flotte">Flotte</string>
+    <string name="research">Recherche</string>
+    <string name="chantier">Chantier spatial</string>
+    <string name="galaxy">Galaxie</string>
+    <string name="disconnect">Déconnexion</string>
 </resources>
