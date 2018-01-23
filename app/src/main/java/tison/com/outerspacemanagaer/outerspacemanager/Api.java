@@ -37,7 +37,7 @@ public interface Api {
     Call<Searches> GetSearchesForUser(@Header("x-access-token") String token);
 
     // StartSearchForUser
-    @GET("/api/v1/searches/create/{searchId}")
+    @POST("/api/v1/searches/create/{searchId}")
     Call<CodeResponse> StartSearchesForUser(@Header("x-access-token") String token, @Path("searchId") String searchId);
 
     // GetShips
@@ -46,7 +46,7 @@ public interface Api {
 
     // GetShip
     @GET("/api/v1/ships/{shipId}")
-    Call<Ship> GetShips(@Header("x-access-token") String token, @Path("shipId") String shipId);
+    Call<Ship> GetShip(@Header("x-access-token") String token, @Path("shipId") String shipId);
 
     // CreateShips
     @POST("/api/v1/ships/create/{shipId}")

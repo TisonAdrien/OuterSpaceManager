@@ -15,12 +15,9 @@
         android:textSize="30sp"
         android:text="@string/building" />
 
-    <TextView
+    <ListView
+        android:id="@+id/listViewBuilding"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="20sp"
-        android:id="@+id/txtBuildings"
-        android:textAlignment="center"
-        android:text="" />
+        android:layout_height="match_parent" />
 
 </LinearLayout>

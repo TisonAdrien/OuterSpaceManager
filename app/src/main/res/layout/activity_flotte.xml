@@ -4,21 +4,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context="tison.com.outerspacemanagaer.outerspacemanager.GalaxyActivity">
+    tools:context="tison.com.outerspacemanagaer.outerspacemanager.BuildingActivity"
+    android:orientation="vertical">
+
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAlignment="center"
         android:textSize="30sp"
-        android:text="@string/galaxy" />
-
+        android:text="@string/flotte" />
 
     <ListView
-        android:id="@+id/listViewGalaxy"
+        android:id="@+id/listViewFlotte"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-
 
 </LinearLayout>

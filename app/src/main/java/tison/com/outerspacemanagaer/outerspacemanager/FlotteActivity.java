@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,12 +19,11 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class BuildingActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
+public class FlotteActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
+    private ListView listShips;
 
-    private ListView listBuilding;
-
-    private List<Building> buildings;
+    private List<Ship> flotte;
 
     public static final String PREFS_NAME = "TOKEN_FILE";
     private String token;
@@ -33,21 +31,21 @@ public class BuildingActivity extends AppCompatActivity implements AdapterView.O
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_building);
+        setContentView(R.layout.activity_flotte);
 
-        listBuilding = (ListView) findViewById(R.id.listViewBuilding);
-        listBuilding.setOnItemClickListener(this);
+        listShips = (ListView) findViewById(R.id.listViewFlotte);
+        listShips.setOnItemClickListener(this);
 
         SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
         token = settings.getString("token","");
 
         Retrofit retrofit= new Retrofit.Builder().baseUrl("https://outer-space-manager.herokuapp.com").addConverterFactory(GsonConverterFactory.create()).build();
         Api service = retrofit.create(Api.class);
-        Call<Buildings> request = service.GetBuildings(token);
+        Call<Ships> request = service.GetShips(token);
 
-        request.enqueue(new Callback<Buildings>() {
+        request.enqueue(new Callback<Ships>() {
             @Override
-            public void onResponse(Call<Buildings> call, Response<Buildings> response) {
+            public void onResponse(Call<Ships> call, Response<Ships> response) {
                 if(response.code() != 200){
                     Toast.makeText(getApplicationContext(), "Une erreur est survenue !", Toast.LENGTH_LONG).show();
 
@@ -57,31 +55,30 @@ public class BuildingActivity extends AppCompatActivity implements AdapterView.O
                         e.printStackTrace();
                     }
                 }else{
-                    buildings = response.body().getBuildings();
-                    listBuilding.setAdapter(new ArrayAdapter(getApplicationContext(),  android.R.layout.simple_list_item_1, buildings));
-                    //Toast.makeText(getApplicationContext(), buildings.toString(), Toast.LENGTH_LONG).show();
+                    flotte = response.body().getShips();
+                    //Toast.makeText(getApplicationContext(), response.body().getShips().toString(), Toast.LENGTH_LONG).show();
 
-
+                    listShips.setAdapter(new ArrayAdapter(getApplicationContext(),  android.R.layout.simple_list_item_1, flotte));
                 }
             }
 
             @Override
-            public void onFailure(Call<Buildings> call, Throwable t) {
+            public void onFailure(Call<Ships> call, Throwable t) {
                 Toast.makeText(getApplicationContext(), call.toString(), Toast.LENGTH_LONG).show();
                 Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_LONG).show();
             }
         });
-
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Building building = buildings.get(position);
-        //Toast.makeText(getApplicationContext(), search.getName(), Toast.LENGTH_LONG).show();
+        Ship ship = flotte.get(position);
+        ship.setAmount("1");
+        Toast.makeText(getApplicationContext(), ship.getAmount(), Toast.LENGTH_LONG).show();
 
         Retrofit retrofit= new Retrofit.Builder().baseUrl("https://outer-space-manager.herokuapp.com").addConverterFactory(GsonConverterFactory.create()).build();
         Api service = retrofit.create(Api.class);
-        Call<CodeResponse> request = service.CreateBuilding(token, Integer.toString(position));
+        Call<CodeResponse> request = service.CreateShips(token,ship);
 
         request.enqueue(new Callback<CodeResponse>() {
             @Override

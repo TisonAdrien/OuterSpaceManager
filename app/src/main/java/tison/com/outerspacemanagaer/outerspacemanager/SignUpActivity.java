@@ -61,6 +61,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         {
             Retrofit retrofit= new Retrofit.Builder().baseUrl("https://outer-space-manager.herokuapp.com").addConverterFactory(GsonConverterFactory.create()).build();
             Api service = retrofit.create(Api.class);
+            Toast.makeText(getApplicationContext(), "Connection...", Toast.LENGTH_LONG).show();
             Call<AuthResponse> request = service.Connection(new User(inputUsername.getText().toString(), inputPassword.getText().toString(), ""));
             request.enqueue(new Callback<AuthResponse>() {
                 @Override
@@ -68,7 +69,6 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                     if(response.code() != 200){
                         Toast.makeText(getApplicationContext(), "Identifiant ou mot de passe incorrecte", Toast.LENGTH_LONG).show();
                     }else{
-                        Toast.makeText(getApplicationContext(), "Connection...", Toast.LENGTH_LONG).show();
                         SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
                         SharedPreferences.Editor editor = settings.edit();
                         editor.putString("token", response.body().getToken());

@@ -120,4 +120,8 @@ public class Ship {
         return timeToBuild;
     }
 
+    @Override
+    public String toString() {
+        return this.name + " : " + this.getLife() + " HP";
+    }
 }

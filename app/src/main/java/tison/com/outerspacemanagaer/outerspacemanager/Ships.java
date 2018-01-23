@@ -1,5 +1,6 @@
 package tison.com.outerspacemanagaer.outerspacemanager;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -11,7 +12,7 @@ public class Ships {
     private String currentUserGas;
     private String size;
     private String amount;
-    private List<Ship> ships;
+    private ArrayList<Ship> ships;
 
     public String getAmount() {
         return amount;
@@ -33,7 +34,7 @@ public class Ships {
         this.currentUserMinerals = currentUserMinerals;
     }
 
-    public void setShips(List<Ship> ships) {
+    public void setShips(ArrayList<Ship> ships) {
         this.ships = ships;
     }
 
@@ -41,7 +42,7 @@ public class Ships {
         return size;
     }
 
-    public List<Ship> getShips() {
+    public ArrayList<Ship> getShips() {
         return ships;
     }
 

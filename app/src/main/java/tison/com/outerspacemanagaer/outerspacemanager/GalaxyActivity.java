@@ -13,6 +13,7 @@ import android.widget.Toast;
 import org.w3c.dom.Text;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -21,11 +22,10 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class GalaxyActivity extends AppCompatActivity implements View.OnClickListener{
+public class GalaxyActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener{
 
-    private TextView txtUsers;
-
-    private List<UserResponse> listUsers;
+    private ArrayList<UserResponse> listUsers;
+    private ListView viewUsers;
 
     public static final String PREFS_NAME = "TOKEN_FILE";
     private String token;
@@ -34,8 +34,10 @@ public class GalaxyActivity extends AppCompatActivity implements View.OnClickLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_galaxy);
+        viewUsers = (ListView) findViewById(R.id.listViewGalaxy);
+        viewUsers.setOnItemClickListener(this);
 
-        txtUsers = (TextView) findViewById(R.id.txtUsers);
+
 
         SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
         token = settings.getString("token","");
@@ -58,13 +60,7 @@ public class GalaxyActivity extends AppCompatActivity implements View.OnClickLis
                 }else{
                     //Toast.makeText(getApplicationContext(), "Connection...", Toast.LENGTH_LONG).show();
                     listUsers = response.body().getUsers();
-                    String toDisplay = "";
-                    for (UserResponse user : listUsers) {
-                        toDisplay += user.toString() + "\n";
-                    }
-
-                    txtUsers.setText(toDisplay);
-
+                    viewUsers.setAdapter(new ArrayAdapter(getApplicationContext(),  android.R.layout.simple_list_item_1, listUsers));
                 }
             }
 
@@ -78,6 +74,11 @@ public class GalaxyActivity extends AppCompatActivity implements View.OnClickLis
 
     @Override
     public void onClick(View v) {
+
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
     }
 }

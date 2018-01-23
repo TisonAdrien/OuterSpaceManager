@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         if(v.getId() == butDisconnect.getId()){
-            Toast.makeText(getApplicationContext(), "Déconnexion...", Toast.LENGTH_LONG).show();
+            //Toast.makeText(getApplicationContext(), "Déconnexion...", Toast.LENGTH_LONG).show();
             SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
             SharedPreferences.Editor editor = settings.edit();
             editor.putString("token", "");
@@ -102,6 +102,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             startActivity(myIntent);
         }else if(v.getId() == butBuilding.getId()){
             Intent myIntent = new Intent(getApplicationContext(), BuildingActivity.class);
+            startActivity(myIntent);
+        }else if(v.getId() == butChantier.getId()){
+            Intent myIntent = new Intent(getApplicationContext(), ChantierActivity.class);
+            startActivity(myIntent);
+        }else if(v.getId() == butFlotte.getId()){
+            Intent myIntent = new Intent(getApplicationContext(), FlotteActivity.class);
+            startActivity(myIntent);
+        }else if(v.getId() == butGeneral.getId()){
+            Intent myIntent = new Intent(getApplicationContext(), GeneralActivity.class);
+            startActivity(myIntent);
+        }else if(v.getId() == butSearch.getId()){
+            Intent myIntent = new Intent(getApplicationContext(), SearchActivity.class);
             startActivity(myIntent);
         }
     }

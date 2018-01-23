@@ -1,5 +1,6 @@
 package tison.com.outerspacemanagaer.outerspacemanager;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -8,9 +9,9 @@ import java.util.List;
 
 public class Searches {
     private String size;
-    private List<Search> searches;
+    private ArrayList<Search> searches;
 
-    public void setSearches(List<Search> searches) {
+    public void setSearches(ArrayList<Search> searches) {
         this.searches = searches;
     }
 
@@ -18,7 +19,7 @@ public class Searches {
         this.size = size;
     }
 
-    public List<Search> getSearches() {
+    public ArrayList<Search> getSearches() {
         return searches;
     }
 

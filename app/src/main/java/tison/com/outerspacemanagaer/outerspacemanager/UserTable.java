@@ -1,5 +1,6 @@
 package tison.com.outerspacemanagaer.outerspacemanager;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -7,13 +8,13 @@ import java.util.List;
  */
 
 public class UserTable {
-    private List<UserResponse> users;
+    private ArrayList<UserResponse> users;
 
-    public List<UserResponse> getUsers() {
+    public ArrayList<UserResponse> getUsers() {
         return users;
     }
 
-    public void setUsers(List<UserResponse> users) {
+    public void setUsers(ArrayList<UserResponse> users) {
         this.users = users;
     }
 
