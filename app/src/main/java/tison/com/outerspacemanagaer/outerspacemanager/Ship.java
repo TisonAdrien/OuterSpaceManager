@@ -123,8 +123,8 @@ public class Ship {
     @Override
     public String toString() {
         if(this.amount != null)
-            return this.amount + " " + this.name + "\n\t" + this.getLife() + " HP\n\t" + this.getShield() + " SP\n\t" + this.getMinAttack() + "-" + this.getMaxAttack() + " AP\n\t" + this.getSpeed() + " SPEED";
+            return this.amount + " " + this.name + "\n\t\t\t" + this.getLife() + " HP\n\t\t\t" + this.getShield() + " SP\n\t\t\t" + this.getMinAttack() + "-" + this.getMaxAttack() + " AP\n\t\t\t" + this.getSpeed() + " SPEED";
         else
-            return "0 " + this.name + " : " + this.getLife() + " HP\n\t" + this.getShield() + " SP\n\t" + this.getMinAttack() + "-" + this.getMaxAttack() + " AP\n\t" + this.getSpeed() + " SPEED";
+            return "0 " + this.name + " : " + this.getLife() + " HP\n\t\t\t" + this.getShield() + " SP\n\t\t\t" + this.getMinAttack() + "-" + this.getMaxAttack() + " AP\n\t\t\t" + this.getSpeed() + " SPEED";
     }
 }
