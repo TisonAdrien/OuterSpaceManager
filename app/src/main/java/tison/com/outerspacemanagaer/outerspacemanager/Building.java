@@ -137,11 +137,13 @@ public class Building {
     @Override
     public String toString() {
         Double time =  Double.parseDouble(this.getTimeToBuildLevel0()) + ( Double.parseDouble(this.getTimeToBuildByLevel()) * Double.parseDouble(this.getLevel()));
+        Integer minutes = (int) Math.floor(time / 60);
+        Integer seconds = (int) Math.floor(time % 60);
         Double costMineral = Double.parseDouble(this.getMineralCostLevel0() + ( Double.parseDouble(this.getMineralCostByLevel()) * Double.parseDouble(this.getLevel())));
         Double costGas = Double.parseDouble(this.getGasCostLevel0() + ( Double.parseDouble(this.getGasCostByLevel()) * Double.parseDouble(this.getLevel())));
         Double amountEffect = Double.parseDouble(this.getAmountOfEffectLevel0() + (Double.parseDouble(this.getAmountOfEffectByLevel()) * Double.parseDouble(this.getLevel())));
         if(this.getBuilding().equals("true")) {
-            return this.getName() + " level " + this.getLevel() + "\nEn cours de construction (" + time.toString() + "s)\n\tCoût de la construction :\n\t\t\t" + costMineral.toString() + " mineraux\n\t\t\t" + costGas.toString() + " gaz\n\tEffet : " + amountEffect + " " + this.getEffect();
+            return this.getName() + " level " + this.getLevel() + "\nEn cours de construction ("+minutes.toString()+"m" + seconds.toString() + "s)\n\tCoût de la construction :\n\t\t\t" + costMineral.toString() + " mineraux\n\t\t\t" + costGas.toString() + " gaz\n\tEffet : " + amountEffect + " " + this.getEffect();
         }else
             return this.getName() + " level " + this.getLevel()  + "\n\tCoût de la construction :\n\t\t\t" + costMineral.toString() + " mineraux\n\t\t\t" + costGas.toString() + " gaz\n\tEffet : " + amountEffect + " " + this.getEffect();
     }

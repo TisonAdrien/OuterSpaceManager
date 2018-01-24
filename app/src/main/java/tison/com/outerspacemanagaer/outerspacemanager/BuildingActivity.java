@@ -1,15 +1,25 @@
 package tison.com.outerspacemanagaer.outerspacemanager;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.dynamitechetan.flowinggradient.FlowingGradientClass;
 
 import java.io.IOException;
 import java.util.List;
@@ -37,6 +47,13 @@ public class BuildingActivity extends AppCompatActivity implements AdapterView.O
 
         listBuilding = (ListView) findViewById(R.id.listViewBuilding);
         listBuilding.setOnItemClickListener(this);
+
+        LinearLayout rl = (LinearLayout) findViewById(R.id.bg_building);
+        FlowingGradientClass grad = new FlowingGradientClass();
+        grad.setBackgroundResource(R.drawable.translate)
+                .onLinearLayout(rl)
+                .setTransitionDuration(4000)
+                .start();
 
         SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
         token = settings.getString("token","");
@@ -77,6 +94,7 @@ public class BuildingActivity extends AppCompatActivity implements AdapterView.O
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        final Building building = buildings[position];
         //Toast.makeText(getApplicationContext(), search.getName(), Toast.LENGTH_LONG).show();
 
         Retrofit retrofit= new Retrofit.Builder().baseUrl("https://outer-space-manager.herokuapp.com").addConverterFactory(GsonConverterFactory.create()).build();
@@ -96,6 +114,23 @@ public class BuildingActivity extends AppCompatActivity implements AdapterView.O
                     }
                 }else{
                     Toast.makeText(getApplicationContext(), "La construction à commencé !", Toast.LENGTH_LONG).show();
+                    Double time =  Double.parseDouble(building.getTimeToBuildLevel0()) + ( Double.parseDouble(building.getTimeToBuildByLevel()) * Double.parseDouble(building.getLevel()));
+
+                    Intent resultIntent = new Intent(getApplicationContext(), MainActivity.class);
+                    PendingIntent resultPendingIntent =
+                            PendingIntent.getActivity(
+                                    getApplicationContext(),
+                                    0,
+                                    resultIntent,
+                                    PendingIntent.FLAG_UPDATE_CURRENT
+                            );
+                    NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getApplicationContext())
+                            .setContentTitle("Outer Space Manager - Construction terminée")
+                            .setContentText("Hey ! Ton " + building.getName() + " est terminé !")
+                            .setContentIntent(resultPendingIntent)
+                            .setWhen(System.currentTimeMillis() + Double.doubleToLongBits(time * 1000));
+
+
                 }
             }
 

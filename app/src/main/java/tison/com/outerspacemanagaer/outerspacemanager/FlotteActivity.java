@@ -6,9 +6,12 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.dynamitechetan.flowinggradient.FlowingGradientClass;
 
 import java.io.IOException;
 import java.util.List;
@@ -32,6 +35,13 @@ public class FlotteActivity extends AppCompatActivity implements AdapterView.OnI
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_flotte);
+
+        LinearLayout rl = (LinearLayout) findViewById(R.id.bg_flotte);
+        FlowingGradientClass grad = new FlowingGradientClass();
+        grad.setBackgroundResource(R.drawable.translate)
+                .onLinearLayout(rl)
+                .setTransitionDuration(4000)
+                .start();
 
         listShips = (ListView) findViewById(R.id.listViewFlotte);
         listShips.setOnItemClickListener(this);

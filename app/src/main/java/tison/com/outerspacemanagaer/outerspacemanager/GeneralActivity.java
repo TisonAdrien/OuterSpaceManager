@@ -3,8 +3,11 @@ package tison.com.outerspacemanagaer.outerspacemanager;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.dynamitechetan.flowinggradient.FlowingGradientClass;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -23,6 +26,13 @@ public class GeneralActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_general);
+
+        LinearLayout rl = (LinearLayout) findViewById(R.id.bg_general);
+        FlowingGradientClass grad = new FlowingGradientClass();
+        grad.setBackgroundResource(R.drawable.translate)
+                .onLinearLayout(rl)
+                .setTransitionDuration(4000)
+                .start();
 
         txtInfos = (TextView) findViewById(R.id.txtInfos);
 

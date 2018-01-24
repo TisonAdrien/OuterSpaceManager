@@ -6,9 +6,12 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.dynamitechetan.flowinggradient.FlowingGradientClass;
 
 import org.w3c.dom.Text;
 
@@ -37,7 +40,12 @@ public class GalaxyActivity extends AppCompatActivity implements View.OnClickLis
         viewUsers = (ListView) findViewById(R.id.listViewGalaxy);
         viewUsers.setOnItemClickListener(this);
 
-
+        LinearLayout rl = (LinearLayout) findViewById(R.id.bg_galaxy);
+        FlowingGradientClass grad = new FlowingGradientClass();
+        grad.setBackgroundResource(R.drawable.translate)
+                .onLinearLayout(rl)
+                .setTransitionDuration(4000)
+                .start();
 
         SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
         token = settings.getString("token","");

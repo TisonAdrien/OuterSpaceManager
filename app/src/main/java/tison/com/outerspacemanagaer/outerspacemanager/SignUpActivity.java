@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -17,6 +18,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import com.dynamitechetan.flowinggradient.FlowingGradientClass;
 
 public class SignUpActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -41,6 +43,13 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         btnCreate = (Button) findViewById(R.id.btnAjouter);
         inputUsername = (EditText) findViewById(R.id.inputUsername);
         inputPassword = (EditText) findViewById(R.id.inputPassword);
+
+        LinearLayout rl = (LinearLayout) findViewById(R.id.bg_login);
+        FlowingGradientClass grad = new FlowingGradientClass();
+        grad.setBackgroundResource(R.drawable.translate)
+                .onLinearLayout(rl)
+                .setTransitionDuration(4000)
+                .start();
 
         btnCreate.setOnClickListener(this);
         btnValider.setOnClickListener(this);

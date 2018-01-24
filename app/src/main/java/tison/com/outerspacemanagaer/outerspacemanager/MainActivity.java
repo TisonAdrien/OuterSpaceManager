@@ -7,8 +7,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.dynamitechetan.flowinggradient.FlowingGradientClass;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -38,6 +41,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        LinearLayout rl = (LinearLayout) findViewById(R.id.bg_menu);
+        FlowingGradientClass grad = new FlowingGradientClass();
+        grad.setBackgroundResource(R.drawable.translate)
+                .onLinearLayout(rl)
+                .setTransitionDuration(4000)
+                .start();
 
         txtPoints = (TextView) findViewById(R.id.textViewScore);
         txtUsername = (TextView) findViewById(R.id.textViewUsername);

@@ -1,14 +1,20 @@
 package tison.com.outerspacemanagaer.outerspacemanager;
 
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.dynamitechetan.flowinggradient.FlowingGradientClass;
 
 import org.w3c.dom.Text;
 
@@ -34,6 +40,13 @@ public class SearchActivity extends AppCompatActivity implements AdapterView.OnI
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
+
+        LinearLayout rl = (LinearLayout) findViewById(R.id.bg_search);
+        FlowingGradientClass grad = new FlowingGradientClass();
+        grad.setBackgroundResource(R.drawable.translate)
+                .onLinearLayout(rl)
+                .setTransitionDuration(4000)
+                .start();
 
         listSearch = (ListView) findViewById(R.id.listViewSearch);
         listSearch.setOnItemClickListener(this);
@@ -77,6 +90,7 @@ public class SearchActivity extends AppCompatActivity implements AdapterView.OnI
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        final Search search = searches[position];
         //Toast.makeText(getApplicationContext(), search.getName(), Toast.LENGTH_LONG).show();
 
         Retrofit retrofit= new Retrofit.Builder().baseUrl("https://outer-space-manager.herokuapp.com").addConverterFactory(GsonConverterFactory.create()).build();
@@ -96,6 +110,21 @@ public class SearchActivity extends AppCompatActivity implements AdapterView.OnI
                     }
                 }else{
                     Toast.makeText(getApplicationContext(), "La recherche à commencé !", Toast.LENGTH_LONG).show();
+
+                    Double time =  Double.parseDouble(search.getTimeToBuildLevel0()) + ( Double.parseDouble(search.getTimeToBuildByLevel()) * Double.parseDouble(search.getLevel()));
+                    Intent resultIntent = new Intent(getApplicationContext(), MainActivity.class);
+                    PendingIntent resultPendingIntent =
+                            PendingIntent.getActivity(
+                                    getApplicationContext(),
+                                    0,
+                                    resultIntent,
+                                    PendingIntent.FLAG_UPDATE_CURRENT
+                            );
+                    NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getApplicationContext())
+                            .setContentTitle("Outer Space Manager - Recherche terminée")
+                            .setContentText("Hey ! Ta " + search.getName() + " est terminé !")
+                            .setContentIntent(resultPendingIntent)
+                            .setWhen(System.currentTimeMillis() + Double.doubleToLongBits(time * 1000));
                 }
             }
 

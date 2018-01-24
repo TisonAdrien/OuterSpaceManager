@@ -6,7 +6,10 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
+
+import com.dynamitechetan.flowinggradient.FlowingGradientClass;
 
 import java.io.IOException;
 
@@ -35,6 +38,13 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
         inputUsername = (EditText) findViewById(R.id.inputUsername);
         inputPassword = (EditText) findViewById(R.id.inputPassword);
         inputEmail = (EditText) findViewById(R.id.inputEmail);
+
+        LinearLayout rl = (LinearLayout) findViewById(R.id.bg_create);
+        FlowingGradientClass grad = new FlowingGradientClass();
+        grad.setBackgroundResource(R.drawable.translate)
+                .onLinearLayout(rl)
+                .setTransitionDuration(4000)
+                .start();
 
         btnValider.setOnClickListener(this);
         btnConnect.setOnClickListener(this);

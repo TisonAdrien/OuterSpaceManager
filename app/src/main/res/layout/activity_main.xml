@@ -5,12 +5,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:id="@+id/bg_menu"
     tools:context="tison.com.outerspacemanagaer.outerspacemanager.MainActivity">
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="90sp"
+        app:srcCompat="@drawable/logo" />
 
     <Space
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="20dp"
+        android:minHeight="5dp"
         />
 
     <TextView
