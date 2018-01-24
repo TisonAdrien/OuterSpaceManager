@@ -1,6 +1,7 @@
 package tison.com.outerspacemanagaer.outerspacemanager;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,14 +27,10 @@ public class SearchAdpater extends ArrayAdapter<Search> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View rowView = inflater.inflate(R.layout.row_flotte, parent, false);
-        TextView textView = (TextView) rowView.findViewById(R.id.label);
-        ImageView imageView = (ImageView) rowView.findViewById(R.id.icon);
+        View rowView = inflater.inflate(R.layout.row_search, parent, false);
+        TextView textView = (TextView) rowView.findViewById(R.id.labelSearch);
 
-        if(values[position].getBuilding().equals("true"))
-            textView.setText(values[position].getName() + " En cours de recherche (" + values[position].getTimeToBuildByLevel() + "s)");
-        else
-            textView.setText(values[position].getName() + " level  " + values[position].getLevel() + " " + values[position].getBuilding());
+        textView.setText(values[position].toString());
 
         return rowView;
     }

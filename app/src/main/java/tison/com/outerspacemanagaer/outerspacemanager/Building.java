@@ -1,5 +1,7 @@
 package tison.com.outerspacemanagaer.outerspacemanager;
 
+import static java.lang.Integer.parseInt;
+
 /**
  * Created by atison on 23/01/2018.
  */
@@ -134,6 +136,13 @@ public class Building {
 
     @Override
     public String toString() {
-        return this.getName() + " - level " + this.getLevel();
+        Double time =  Double.parseDouble(this.getTimeToBuildLevel0()) + ( Double.parseDouble(this.getAmountOfEffectByLevel()) * Double.parseDouble(this.getLevel()));
+        Double costMineral = Double.parseDouble(this.getMineralCostLevel0() + ( Double.parseDouble(this.getMineralCostByLevel()) * Double.parseDouble(this.getLevel())));
+        Double costGas = Double.parseDouble(this.getGasCostLevel0() + ( Double.parseDouble(this.getGasCostByLevel()) * Double.parseDouble(this.getLevel())));
+        Double amountEffect = Double.parseDouble(this.getAmountOfEffectLevel0() + (Double.parseDouble(this.getAmountOfEffectByLevel()) * Double.parseDouble(this.getLevel())));
+        if(this.getBuilding().equals("true")) {
+            return this.getName() + " level " + this.getLevel() + "\nEn cours de construction (" + time.toString() + "s)\n\tCoût de la recherche : " + costMineral.toString() + " mineraux et " + costGas.toString() + " gaz\n\tEffet : " + amountEffect + " " + this.getEffect();
+        }else
+            return this.getName() + " level " + this.getLevel()  + "\n\tCoût de la recherche : " + costMineral.toString() + " mineraux et " + costGas.toString() + " gaz\n\tEffet : " + amountEffect + " " + this.getEffect();
     }
 }

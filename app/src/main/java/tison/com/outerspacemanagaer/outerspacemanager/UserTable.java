@@ -8,13 +8,13 @@ import java.util.List;
  */
 
 public class UserTable {
-    private ArrayList<UserResponse> users;
+    private UserResponse[] users;
 
-    public ArrayList<UserResponse> getUsers() {
+    public UserResponse[] getUsers() {
         return users;
     }
 
-    public void setUsers(ArrayList<UserResponse> users) {
+    public void setUsers(UserResponse[] users) {
         this.users = users;
     }
 

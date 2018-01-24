@@ -8,13 +8,13 @@ import java.util.List;
 
 public class Buildings {
     private String size;
-    private List<Building> buildings;
+    private Building[] buildings;
 
     public void setSize(String size) {
         this.size = size;
     }
 
-    public void setBuildings(List<Building> buildings) {
+    public void setBuildings(Building[] buildings) {
         this.buildings = buildings;
     }
 
@@ -22,7 +22,7 @@ public class Buildings {
         return size;
     }
 
-    public List<Building> getBuildings() {
+    public Building[] getBuildings() {
         return buildings;
     }
 }

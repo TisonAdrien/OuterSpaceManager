@@ -23,7 +23,7 @@ public class FlotteActivity extends AppCompatActivity implements AdapterView.OnI
 
     private ListView listShips;
 
-    private List<Ship> flotte;
+    private Ship[] flotte;
 
     public static final String PREFS_NAME = "TOKEN_FILE";
     private String token;
@@ -58,7 +58,10 @@ public class FlotteActivity extends AppCompatActivity implements AdapterView.OnI
                     flotte = response.body().getShips();
                     //Toast.makeText(getApplicationContext(), response.body().getShips().toString(), Toast.LENGTH_LONG).show();
 
-                    listShips.setAdapter(new ArrayAdapter(getApplicationContext(),  android.R.layout.simple_list_item_1, flotte));
+                    //listShips.setAdapter(new ArrayAdapter(getApplicationContext(),  android.R.layout.simple_list_item_1, flotte));
+
+                    FlotteAdapter adapter = new FlotteAdapter(getApplicationContext(), flotte );
+                    listShips.setAdapter(adapter);
                 }
             }
 
@@ -72,25 +75,19 @@ public class FlotteActivity extends AppCompatActivity implements AdapterView.OnI
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Ship ship = flotte.get(position);
+        Ship ship = flotte[position];
         ship.setAmount("1");
-        Toast.makeText(getApplicationContext(), ship.getAmount(), Toast.LENGTH_LONG).show();
+        //Toast.makeText(getApplicationContext(), ship.toString(), Toast.LENGTH_LONG).show();
 
         Retrofit retrofit= new Retrofit.Builder().baseUrl("https://outer-space-manager.herokuapp.com").addConverterFactory(GsonConverterFactory.create()).build();
         Api service = retrofit.create(Api.class);
-        Call<CodeResponse> request = service.CreateShips(token,ship);
+        Call<CodeResponse> request = service.CreateShips(token, ship, ship.getShipId());
 
         request.enqueue(new Callback<CodeResponse>() {
             @Override
             public void onResponse(Call<CodeResponse> call, Response<CodeResponse> response) {
                 if(response.code() != 200){
-                    Toast.makeText(getApplicationContext(), "Une erreur est survenue !", Toast.LENGTH_LONG).show();
-
-                    try {
-                        Toast.makeText(getApplicationContext(), response.errorBody().string(), Toast.LENGTH_LONG).show();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    Toast.makeText(getApplicationContext(), "Une erreur est survenue, ne spam pas !", Toast.LENGTH_LONG).show();
                 }else{
                     Toast.makeText(getApplicationContext(), "La construction à commencé !", Toast.LENGTH_LONG).show();
                 }

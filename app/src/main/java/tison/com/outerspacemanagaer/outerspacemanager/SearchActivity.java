@@ -25,7 +25,7 @@ public class SearchActivity extends AppCompatActivity implements AdapterView.OnI
 
     private ListView listSearch;
 
-    private List<Search> searches;
+    private Search[] searches;
 
     public static final String PREFS_NAME = "TOKEN_FILE";
     private String token;
@@ -60,7 +60,10 @@ public class SearchActivity extends AppCompatActivity implements AdapterView.OnI
                     searches = response.body().getSearches();
                     //Toast.makeText(getApplicationContext(), buildings.toString(), Toast.LENGTH_LONG).show();
 
-                    listSearch.setAdapter(new ArrayAdapter(getApplicationContext(),  android.R.layout.simple_list_item_1, searches));
+                    //listSearch.setAdapter(new ArrayAdapter(getApplicationContext(),  android.R.layout.simple_list_item_1, searches));
+
+                    SearchAdpater adapter = new SearchAdpater(getApplicationContext(), searches );
+                    listSearch.setAdapter(adapter);
                 }
             }
 
@@ -74,12 +77,11 @@ public class SearchActivity extends AppCompatActivity implements AdapterView.OnI
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Search search = searches.get(position);
         //Toast.makeText(getApplicationContext(), search.getName(), Toast.LENGTH_LONG).show();
 
         Retrofit retrofit= new Retrofit.Builder().baseUrl("https://outer-space-manager.herokuapp.com").addConverterFactory(GsonConverterFactory.create()).build();
         Api service = retrofit.create(Api.class);
-            Call<CodeResponse> request = service.StartSearchesForUser(token, Integer.toString(position));
+        Call<CodeResponse> request = service.StartSearchesForUser(token, Integer.toString(position));
 
         request.enqueue(new Callback<CodeResponse>() {
             @Override

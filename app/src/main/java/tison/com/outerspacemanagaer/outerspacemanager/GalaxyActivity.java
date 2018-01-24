@@ -24,7 +24,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class GalaxyActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener{
 
-    private ArrayList<UserResponse> listUsers;
+    private UserResponse[] listUsers;
     private ListView viewUsers;
 
     public static final String PREFS_NAME = "TOKEN_FILE";
@@ -60,7 +60,10 @@ public class GalaxyActivity extends AppCompatActivity implements View.OnClickLis
                 }else{
                     //Toast.makeText(getApplicationContext(), "Connection...", Toast.LENGTH_LONG).show();
                     listUsers = response.body().getUsers();
-                    viewUsers.setAdapter(new ArrayAdapter(getApplicationContext(),  android.R.layout.simple_list_item_1, listUsers));
+                    //viewUsers.setAdapter(new ArrayAdapter(getApplicationContext(),  android.R.layout.simple_list_item_1, listUsers));
+
+                    UserAdapter adapter = new UserAdapter(getApplicationContext(), listUsers );
+                    viewUsers.setAdapter(adapter);
                 }
             }
 

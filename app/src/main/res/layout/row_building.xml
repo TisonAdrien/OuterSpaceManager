@@ -5,8 +5,7 @@
     android:layout_height="wrap_content">
 
     <ImageView
-        android:contentDescription="row"
-        android:id="@+id/icon"
+        android:id="@+id/iconBuilding"
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_marginLeft="6dp"
@@ -16,14 +15,15 @@
     </ImageView>
 
     <TextView
-        android:id="@+id/label"
+        android:id="@+id/labelBuilding"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:layout_marginBottom="20dp"
         android:layout_marginLeft="10dp"
         android:text="text"
-        android:textSize="26sp" >
+        android:textColor="@android:color/white"
+        android:textSize="15sp" >
     </TextView>
 
 </LinearLayout>

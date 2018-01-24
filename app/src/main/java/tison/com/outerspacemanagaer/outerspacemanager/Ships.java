@@ -12,7 +12,7 @@ public class Ships {
     private String currentUserGas;
     private String size;
     private String amount;
-    private ArrayList<Ship> ships;
+    private Ship[] ships;
 
     public String getAmount() {
         return amount;
@@ -34,7 +34,7 @@ public class Ships {
         this.currentUserMinerals = currentUserMinerals;
     }
 
-    public void setShips(ArrayList<Ship> ships) {
+    public void setShips(Ship[] ships) {
         this.ships = ships;
     }
 
@@ -42,7 +42,7 @@ public class Ships {
         return size;
     }
 
-    public ArrayList<Ship> getShips() {
+    public Ship[] getShips() {
         return ships;
     }
 

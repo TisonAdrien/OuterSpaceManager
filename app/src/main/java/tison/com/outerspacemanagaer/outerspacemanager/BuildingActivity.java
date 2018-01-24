@@ -25,7 +25,7 @@ public class BuildingActivity extends AppCompatActivity implements AdapterView.O
 
     private ListView listBuilding;
 
-    private List<Building> buildings;
+    private Building[] buildings;
 
     public static final String PREFS_NAME = "TOKEN_FILE";
     private String token;
@@ -58,10 +58,11 @@ public class BuildingActivity extends AppCompatActivity implements AdapterView.O
                     }
                 }else{
                     buildings = response.body().getBuildings();
-                    listBuilding.setAdapter(new ArrayAdapter(getApplicationContext(),  android.R.layout.simple_list_item_1, buildings));
+                    //listBuilding.setAdapter(new ArrayAdapter(getApplicationContext(),  android.R.layout.simple_list_item_1, buildings));
                     //Toast.makeText(getApplicationContext(), buildings.toString(), Toast.LENGTH_LONG).show();
 
-
+                    BuildingAdapter adapter = new BuildingAdapter(getApplicationContext(), buildings );
+                    listBuilding.setAdapter(adapter);
                 }
             }
 
@@ -76,7 +77,6 @@ public class BuildingActivity extends AppCompatActivity implements AdapterView.O
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Building building = buildings.get(position);
         //Toast.makeText(getApplicationContext(), search.getName(), Toast.LENGTH_LONG).show();
 
         Retrofit retrofit= new Retrofit.Builder().baseUrl("https://outer-space-manager.herokuapp.com").addConverterFactory(GsonConverterFactory.create()).build();

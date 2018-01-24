@@ -9,9 +9,9 @@ import java.util.List;
 
 public class Searches {
     private String size;
-    private ArrayList<Search> searches;
+    private Search[] searches;
 
-    public void setSearches(ArrayList<Search> searches) {
+    public void setSearches(Search[] searches) {
         this.searches = searches;
     }
 
@@ -19,7 +19,7 @@ public class Searches {
         this.size = size;
     }
 
-    public ArrayList<Search> getSearches() {
+    public Search[] getSearches() {
         return searches;
     }
 

@@ -1,6 +1,7 @@
 package tison.com.outerspacemanagaer.outerspacemanager;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,10 +29,9 @@ public class UserAdapter extends ArrayAdapter<UserResponse> {
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View rowView = inflater.inflate(R.layout.row_user, parent, false);
-        TextView textView = (TextView) rowView.findViewById(R.id.label);
-        ImageView imageView = (ImageView) rowView.findViewById(R.id.icon);
-        textView.setText(values[position].getUsername() + " : " + values[position].getPoints() + " points");
-        imageView.setImageResource(R.drawable.ic_launcher_background);
+        TextView textView = (TextView) rowView.findViewById(R.id.labelUser);
+
+        textView.setText(values[position].toString());
 
         return rowView;
     }
