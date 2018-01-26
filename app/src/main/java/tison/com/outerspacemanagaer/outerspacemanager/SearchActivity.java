@@ -1,8 +1,11 @@
 package tison.com.outerspacemanagaer.outerspacemanager;
 
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Handler;
+import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -101,30 +104,47 @@ public class SearchActivity extends AppCompatActivity implements AdapterView.OnI
             @Override
             public void onResponse(Call<CodeResponse> call, Response<CodeResponse> response) {
                 if(response.code() != 200){
-                    Toast.makeText(getApplicationContext(), "Une erreur est survenue !", Toast.LENGTH_LONG).show();
-
-                    try {
-                        Toast.makeText(getApplicationContext(), response.errorBody().string(), Toast.LENGTH_LONG).show();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    if(search.getBuilding().equals("true"))
+                        Toast.makeText(getApplicationContext(), "La recherche n'est pas terminée !", Toast.LENGTH_LONG).show();
+                    else
+                        Toast.makeText(getApplicationContext(), "Vous n'avez pas assez de ressources !", Toast.LENGTH_LONG).show();
                 }else{
                     Toast.makeText(getApplicationContext(), "La recherche à commencé !", Toast.LENGTH_LONG).show();
 
                     Double time =  Double.parseDouble(search.getTimeToBuildLevel0()) + ( Double.parseDouble(search.getTimeToBuildByLevel()) * Double.parseDouble(search.getLevel()));
-                    Intent resultIntent = new Intent(getApplicationContext(), MainActivity.class);
-                    PendingIntent resultPendingIntent =
-                            PendingIntent.getActivity(
-                                    getApplicationContext(),
-                                    0,
-                                    resultIntent,
-                                    PendingIntent.FLAG_UPDATE_CURRENT
-                            );
-                    NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getApplicationContext())
-                            .setContentTitle("Outer Space Manager - Recherche terminée")
-                            .setContentText("Hey ! Ta " + search.getName() + " est terminé !")
-                            .setContentIntent(resultPendingIntent)
-                            .setWhen(System.currentTimeMillis() + Double.doubleToLongBits(time * 1000));
+
+                    Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            Intent resultIntent = new Intent(getApplicationContext(), MainActivity.class);
+                            PendingIntent resultPendingIntent =
+                                    PendingIntent.getActivity(
+                                            getApplicationContext(),
+                                            0,
+                                            resultIntent,
+                                            PendingIntent.FLAG_UPDATE_CURRENT
+                                    );
+                            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getApplicationContext())
+                                    .setContentTitle("Outer Space Manager - Recherche terminée")
+                                    .setContentText("Hey ! Ta " + search.getName() + " est terminé !")
+                                    .setSmallIcon(R.drawable.logo)
+                                    .setSound(Settings.System.DEFAULT_NOTIFICATION_URI)
+                                    .setVibrate(new long[] { 1000, 1000, 0, 0, 1000, 1000})
+                                    .setContentIntent(resultPendingIntent)
+                                    .setShowWhen(true)
+                                    .setWhen(System.currentTimeMillis());
+
+                            // Sets an ID for the notification
+                            int mNotificationId = 002;
+                            // Gets an instance of the NotificationManager service
+                            NotificationManager mNotifyMgr =
+                                    (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                            // Builds the notification and issues it.
+                            mNotifyMgr.notify(mNotificationId, mBuilder.build());
+                        }
+                    }, Double.doubleToLongBits(time * 1000));
+
                 }
             }
 
