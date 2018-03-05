@@ -5,6 +5,7 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.HEAD;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
@@ -63,4 +64,8 @@ public interface Api {
     // CreateBuilding
     @POST("/api/v1/buildings/create/{buildingId}")
     Call<CodeResponse> CreateBuilding(@Header("x-access-token") String token, @Path("buildingId") String buildingId);
+
+    // GetReports
+    @GET("/api/v1/reports/0/5")
+    Call<Reports> GetReports(@Header("x-access-token") String token);
 }
