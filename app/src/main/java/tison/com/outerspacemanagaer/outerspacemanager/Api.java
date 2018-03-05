@@ -41,6 +41,10 @@ public interface Api {
     @POST("/api/v1/searches/create/{searchId}")
     Call<CodeResponse> StartSearchesForUser(@Header("x-access-token") String token, @Path("searchId") String searchId);
 
+    // GetAllShips
+    @GET("/api/v1/ships")
+    Call<Ships> GetAllShips(@Header("x-access-token") String token);
+
     // GetShips
     @GET("/api/v1/fleet/list")
     Call<Ships> GetShips(@Header("x-access-token") String token);

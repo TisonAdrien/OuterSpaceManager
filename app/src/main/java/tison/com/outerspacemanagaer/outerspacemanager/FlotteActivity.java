@@ -14,6 +14,8 @@ import android.widget.Toast;
 import com.dynamitechetan.flowinggradient.FlowingGradientClass;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import retrofit2.Call;
@@ -27,6 +29,9 @@ public class FlotteActivity extends AppCompatActivity implements AdapterView.OnI
     private ListView listShips;
 
     private Ship[] flotte;
+    private Ship[] flotte_empty;
+    private Ship[] flotte_ok;
+    private ArrayList<Ship> listFlotte;
 
     public static final String PREFS_NAME = "TOKEN_FILE";
     private String token;
@@ -46,13 +51,17 @@ public class FlotteActivity extends AppCompatActivity implements AdapterView.OnI
         listShips = (ListView) findViewById(R.id.listViewFlotte);
         listShips.setOnItemClickListener(this);
 
+        listFlotte = new ArrayList<Ship>();
+
         SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
         token = settings.getString("token","");
 
         Retrofit retrofit= new Retrofit.Builder().baseUrl("https://outer-space-manager.herokuapp.com").addConverterFactory(GsonConverterFactory.create()).build();
         Api service = retrofit.create(Api.class);
-        Call<Ships> request = service.GetShips(token);
 
+        Call<Ships> request = service.GetAllShips(token);
+
+        request = service.GetAllShips(token);
         request.enqueue(new Callback<Ships>() {
             @Override
             public void onResponse(Call<Ships> call, Response<Ships> response) {
@@ -65,11 +74,42 @@ public class FlotteActivity extends AppCompatActivity implements AdapterView.OnI
                         e.printStackTrace();
                     }
                 }else{
-                    flotte = response.body().getShips();
-                    //Toast.makeText(getApplicationContext(), response.body().getShips().toString(), Toast.LENGTH_LONG).show();
+                    flotte_empty = response.body().getShips();
+                    listFlotte.addAll(Arrays.asList(flotte_empty));
 
-                    //listShips.setAdapter(new ArrayAdapter(getApplicationContext(),  android.R.layout.simple_list_item_1, flotte));
 
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Ships> call, Throwable t) {
+                Toast.makeText(getApplicationContext(), call.toString(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_LONG).show();
+            }
+        });
+
+
+        Retrofit retrofit_2 = new Retrofit.Builder().baseUrl("https://outer-space-manager.herokuapp.com").addConverterFactory(GsonConverterFactory.create()).build();
+        Api service_2 = retrofit_2.create(Api.class);
+        Call<Ships> request_2 = service_2.GetShips(token);
+        request_2.enqueue(new Callback<Ships>() {
+            @Override
+            public void onResponse(Call<Ships> call, Response<Ships> response) {
+                if(response.code() != 200){
+                    Toast.makeText(getApplicationContext(), "Une erreur est survenue !", Toast.LENGTH_LONG).show();
+
+                    try {
+                        Toast.makeText(getApplicationContext(), response.errorBody().string(), Toast.LENGTH_LONG).show();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }else{
+                    flotte_ok = response.body().getShips();
+                    listFlotte.addAll(Arrays.asList(flotte_ok));
+
+
+                    listFlotte.toArray(flotte);
                     FlotteAdapter adapter = new FlotteAdapter(getApplicationContext(), flotte );
                     listShips.setAdapter(adapter);
                 }
@@ -81,6 +121,7 @@ public class FlotteActivity extends AppCompatActivity implements AdapterView.OnI
                 Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_LONG).show();
             }
         });
+
     }
 
     @Override
