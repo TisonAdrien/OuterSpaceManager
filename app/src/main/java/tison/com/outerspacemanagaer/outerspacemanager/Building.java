@@ -99,7 +99,14 @@ public class Building {
     }
 
     public String getEffect() {
-        return effect;
+        String eff = effect;
+        if(eff != null){
+            eff = eff.replace("speed_building", "vitesse de construction");
+            eff = eff.replace("speed_fleet", "vitesse de la flotte");
+        }else{
+            eff = "vitesse de ressourcement";
+        }
+        return eff;
     }
 
     public String getGasCostByLevel() {

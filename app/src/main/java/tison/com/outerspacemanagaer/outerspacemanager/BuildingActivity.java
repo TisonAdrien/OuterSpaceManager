@@ -77,8 +77,6 @@ public class BuildingActivity extends AppCompatActivity implements AdapterView.O
                     }
                 }else{
                     buildings = response.body().getBuildings();
-                    //listBuilding.setAdapter(new ArrayAdapter(getApplicationContext(),  android.R.layout.simple_list_item_1, buildings));
-                    //Toast.makeText(getApplicationContext(), buildings.toString(), Toast.LENGTH_LONG).show();
 
                     BuildingAdapter adapter = new BuildingAdapter(getApplicationContext(), buildings );
                     listBuilding.setAdapter(adapter);
