@@ -53,5 +53,4 @@ public class Ships {
     public String getCurrentUserMinerals() {
         return currentUserMinerals;
     }
-
 }

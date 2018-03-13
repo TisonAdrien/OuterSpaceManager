@@ -58,8 +58,8 @@ public interface Api {
     Call<CodeResponse> CreateShips(@Header("x-access-token") String token, @Body Ship ship, @Path("shipId") String shipId);
 
     // AttackUser
-    @POST("/api/v1/fleet/attack/{userId}")
-    Call<CodeResponse> AttackUser(@Header("x-access-token") String token, @Body Ships ships, @Path("userId") String userId);
+    @POST("/api/v1/fleet/attack/{username}")
+    Call<CodeResponse> AttackUser(@Header("x-access-token") String token, @Body Ships ships, @Path("username") String username);
 
     // GetBuildings
     @GET("/api/v1/buildings/list")

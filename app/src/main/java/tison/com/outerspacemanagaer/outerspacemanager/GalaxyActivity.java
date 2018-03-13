@@ -1,6 +1,7 @@
 package tison.com.outerspacemanagaer.outerspacemanager;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dynamitechetan.flowinggradient.FlowingGradientClass;
+import com.google.gson.Gson;
 
 import org.w3c.dom.Text;
 
@@ -93,6 +95,7 @@ public class GalaxyActivity extends AppCompatActivity implements View.OnClickLis
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        final String user_to_attack = listUsers[position].getUsername();
         AlertDialog.Builder builder = new AlertDialog.Builder(GalaxyActivity.this);
         builder.setMessage("Voulez-vous attaquer " + listUsers[position].getUsername() + " ?");
         builder.setCancelable(true);
@@ -100,8 +103,12 @@ public class GalaxyActivity extends AppCompatActivity implements View.OnClickLis
                 "Oui",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        Toast.makeText(getApplicationContext(), "Not implemented", Toast.LENGTH_LONG).show();
                         dialog.cancel();
+                        Intent myIntent = new Intent(getApplicationContext(), AttackActivity.class);
+                        Gson json = new Gson();
+                        String jsonString = json.toJson(user_to_attack);
+                        myIntent.putExtra("USER_TO_ATTACK", jsonString);
+                        startActivity(myIntent);
                     }
                 });
 
