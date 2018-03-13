@@ -79,6 +79,50 @@ public class FlotteActivity extends AppCompatActivity implements AdapterView.OnI
 
 
 
+
+                    Retrofit retrofit_2 = new Retrofit.Builder().baseUrl("https://outer-space-manager.herokuapp.com").addConverterFactory(GsonConverterFactory.create()).build();
+                    Api service_2 = retrofit_2.create(Api.class);
+                    Call<Ships> request_2 = service_2.GetShips(token);
+                    request_2.enqueue(new Callback<Ships>() {
+                        @Override
+                        public void onResponse(Call<Ships> call, Response<Ships> response) {
+                            if(response.code() != 200){
+                                Toast.makeText(getApplicationContext(), "Une erreur est survenue !", Toast.LENGTH_LONG).show();
+
+                                try {
+                                    Toast.makeText(getApplicationContext(), response.errorBody().string(), Toast.LENGTH_LONG).show();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }else{
+                                flotte_ok = response.body().getShips();
+
+                                ArrayList<Ship> oldFlotte = listFlotte;
+                                int index = 0;
+                                for (Ship s: flotte_ok) {
+                                    index = 0;
+                                    for (Ship s_empty: oldFlotte){
+                                        if(s.getShipId() == s_empty.getShipId()){
+                                            listFlotte.set(index, s);
+                                        }
+                                        index++;
+                                    }
+                                }
+
+
+                                flotte = listFlotte.toArray(new Ship[0]);
+                                FlotteAdapter adapter = new FlotteAdapter(getApplicationContext(), flotte );
+                                listShips.setAdapter(adapter);
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Ships> call, Throwable t) {
+                            Toast.makeText(getApplicationContext(), call.toString(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_LONG).show();
+                        }
+                    });
+
                 }
             }
 
@@ -88,40 +132,6 @@ public class FlotteActivity extends AppCompatActivity implements AdapterView.OnI
                 Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_LONG).show();
             }
         });
-
-
-        Retrofit retrofit_2 = new Retrofit.Builder().baseUrl("https://outer-space-manager.herokuapp.com").addConverterFactory(GsonConverterFactory.create()).build();
-        Api service_2 = retrofit_2.create(Api.class);
-        Call<Ships> request_2 = service_2.GetShips(token);
-        request_2.enqueue(new Callback<Ships>() {
-            @Override
-            public void onResponse(Call<Ships> call, Response<Ships> response) {
-                if(response.code() != 200){
-                    Toast.makeText(getApplicationContext(), "Une erreur est survenue !", Toast.LENGTH_LONG).show();
-
-                    try {
-                        Toast.makeText(getApplicationContext(), response.errorBody().string(), Toast.LENGTH_LONG).show();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }else{
-                    flotte_ok = response.body().getShips();
-                    listFlotte.addAll(Arrays.asList(flotte_ok));
-
-
-                    listFlotte.toArray(flotte);
-                    FlotteAdapter adapter = new FlotteAdapter(getApplicationContext(), flotte );
-                    listShips.setAdapter(adapter);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Ships> call, Throwable t) {
-                Toast.makeText(getApplicationContext(), call.toString(), Toast.LENGTH_LONG).show();
-                Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_LONG).show();
-            }
-        });
-
     }
 
     @Override
