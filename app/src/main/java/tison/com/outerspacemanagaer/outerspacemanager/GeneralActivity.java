@@ -3,6 +3,7 @@ package tison.com.outerspacemanagaer.outerspacemanager;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -47,6 +48,7 @@ public class GeneralActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
                 if(response.code() != 200){
+                    findViewById(R.id.loadingPanelGeneral).setVisibility(View.GONE);
                     Toast.makeText(getApplicationContext(), "Une erreur est survenue !", Toast.LENGTH_LONG).show();
                 }else{
                     //Toast.makeText(getApplicationContext(), "Connection...", Toast.LENGTH_LONG).show();
@@ -54,6 +56,7 @@ public class GeneralActivity extends AppCompatActivity {
                     String toDisplay = user.getUsername() + " (" + user.getPoints() + " points)\n";
                     toDisplay += "Gaz : " + user.getGas() + "\n";
                     toDisplay += "Mineraux : " + user.getMinerals() + "\n";
+                    findViewById(R.id.loadingPanelGeneral).setVisibility(View.GONE);
                     txtInfos.setText(toDisplay);
                 }
             }

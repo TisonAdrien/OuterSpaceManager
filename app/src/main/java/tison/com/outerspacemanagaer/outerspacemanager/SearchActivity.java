@@ -66,7 +66,7 @@ public class SearchActivity extends AppCompatActivity implements AdapterView.OnI
             public void onResponse(Call<Searches> call, Response<Searches> response) {
                 if(response.code() != 200){
                     Toast.makeText(getApplicationContext(), "Une erreur est survenue !", Toast.LENGTH_LONG).show();
-
+                    findViewById(R.id.loadingPanelSearch).setVisibility(View.GONE);
                     try {
                         Toast.makeText(getApplicationContext(), response.errorBody().string(), Toast.LENGTH_LONG).show();
                     } catch (IOException e) {
@@ -77,7 +77,7 @@ public class SearchActivity extends AppCompatActivity implements AdapterView.OnI
                     //Toast.makeText(getApplicationContext(), buildings.toString(), Toast.LENGTH_LONG).show();
 
                     //listSearch.setAdapter(new ArrayAdapter(getApplicationContext(),  android.R.layout.simple_list_item_1, searches));
-
+                    findViewById(R.id.loadingPanelSearch).setVisibility(View.GONE);
                     SearchAdpater adapter = new SearchAdpater(getApplicationContext(), searches );
                     listSearch.setAdapter(adapter);
                 }

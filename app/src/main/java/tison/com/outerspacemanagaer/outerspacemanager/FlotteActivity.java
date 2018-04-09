@@ -92,7 +92,7 @@ public class FlotteActivity extends AppCompatActivity implements AdapterView.OnI
                         public void onResponse(Call<Ships> call, Response<Ships> response) {
                             if(response.code() != 200){
                                 Toast.makeText(getApplicationContext(), "Une erreur est survenue !", Toast.LENGTH_LONG).show();
-
+                                findViewById(R.id.loadingPanelFlotte).setVisibility(View.GONE);
                                 try {
                                     Toast.makeText(getApplicationContext(), response.errorBody().string(), Toast.LENGTH_LONG).show();
                                 } catch (IOException e) {
@@ -115,6 +115,7 @@ public class FlotteActivity extends AppCompatActivity implements AdapterView.OnI
 
 
                                 flotte = listFlotte.toArray(new Ship[0]);
+                                findViewById(R.id.loadingPanelFlotte).setVisibility(View.GONE);
                                 FlotteAdapter adapter = new FlotteAdapter(getApplicationContext(), flotte );
                                 listShips.setAdapter(adapter);
                             }

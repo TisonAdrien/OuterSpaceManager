@@ -82,7 +82,7 @@ public class GalaxyActivity extends AppCompatActivity implements View.OnClickLis
             public void onResponse(Call<UserTable> call, Response<UserTable> response) {
                 if(response.code() != 200){
                     //Toast.makeText(getApplicationContext(), "Une erreur est survenue !", Toast.LENGTH_LONG).show();
-
+                    findViewById(R.id.loadingPanelGalaxy).setVisibility(View.GONE);
                     try {
                         Toast.makeText(getApplicationContext(), response.errorBody().string(), Toast.LENGTH_LONG).show();
                     } catch (IOException e) {
@@ -99,7 +99,7 @@ public class GalaxyActivity extends AppCompatActivity implements View.OnClickLis
                     }
 
                     //viewUsers.setAdapter(new ArrayAdapter(getApplicationContext(),  android.R.layout.simple_list_item_1, listUsers));
-
+                    findViewById(R.id.loadingPanelGalaxy).setVisibility(View.GONE);
                     UserAdapter adapter = new UserAdapter(getApplicationContext(), listUsers );
                     viewUsers.setAdapter(adapter);
                 }

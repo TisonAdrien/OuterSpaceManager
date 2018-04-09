@@ -74,6 +74,7 @@ public class ChantierActivity extends AppCompatActivity implements View.OnClickL
             @Override
             public void onResponse(Call<Reports> call, Response<Reports> response) {
                 if(response.code() != 200){
+                    findViewById(R.id.loadingPanelChantier).setVisibility(View.GONE);
                     try {
                         Toast.makeText(getApplicationContext(), response.errorBody().string(), Toast.LENGTH_LONG).show();
                     } catch (IOException e) {
@@ -88,6 +89,7 @@ public class ChantierActivity extends AppCompatActivity implements View.OnClickL
                     }else{
                         nextButton.setVisibility(View.INVISIBLE);
                     }
+                    findViewById(R.id.loadingPanelChantier).setVisibility(View.GONE);
                     ReportAdapter adapter = new ReportAdapter(getApplicationContext(), reports );
                     listViewReport.setAdapter(adapter);
                 }

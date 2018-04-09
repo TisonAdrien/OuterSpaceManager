@@ -69,7 +69,7 @@ public class BuildingActivity extends AppCompatActivity implements AdapterView.O
             public void onResponse(Call<Buildings> call, Response<Buildings> response) {
                 if(response.code() != 200){
                     Toast.makeText(getApplicationContext(), "Une erreur est survenue !", Toast.LENGTH_LONG).show();
-
+                    findViewById(R.id.loadingPanelBuilding).setVisibility(View.GONE);
                     try {
                         Toast.makeText(getApplicationContext(), response.errorBody().string(), Toast.LENGTH_LONG).show();
                     } catch (IOException e) {
@@ -77,7 +77,7 @@ public class BuildingActivity extends AppCompatActivity implements AdapterView.O
                     }
                 }else{
                     buildings = response.body().getBuildings();
-
+                    findViewById(R.id.loadingPanelBuilding).setVisibility(View.GONE);
                     BuildingAdapter adapter = new BuildingAdapter(getApplicationContext(), buildings );
                     listBuilding.setAdapter(adapter);
                 }
