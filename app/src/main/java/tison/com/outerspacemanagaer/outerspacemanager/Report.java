@@ -109,8 +109,8 @@ public class Report {
     @Override
     public String toString() {
         if(this.getType().equals("attacker"))
-            return "You have attacked " + this.getTo() + " !\n\tGas won : " + this.getGasWon() + "\n\tMinerals won : " + this.getMineralsWon();
+            return "You have attacked " + this.getTo() + " !\n\tGas won : " + Math.round(Double.parseDouble(this.getGasWon())) + "\n\tMinerals won : " + Math.round(Double.parseDouble(this.getMineralsWon()));
         else
-            return "You have been attacked by " + this.getFrom() + " !\n\tGas won : " + this.getGasWon() + "\n\tMinerals won : " + this.getMineralsWon() + " '" + this.getType() + "' ";
+            return "You have been attacked by " + this.getFrom() + " !\n\tGas won : " + Math.round(Double.parseDouble(this.getGasWon())) + "\n\tMinerals won : " + Math.round(Double.parseDouble(this.getMineralsWon()));
     }
 }
