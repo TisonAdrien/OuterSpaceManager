@@ -30,8 +30,8 @@ public interface Api {
     Call<UserResponse> GetUserInfo(@Header("x-access-token") String token);
 
     // GetUsers
-    @GET("/api/v1/users/0/20")
-    Call<UserTable> GetUsers(@Header("x-access-token") String token);
+    @GET("/api/v1/users/{offset}/20")
+    Call<UserTable> GetUsers(@Header("x-access-token") String token, @Path("offset") String offset);
 
     // GetSearchesForUser
     @GET("/api/v1/searches/list")
@@ -70,6 +70,6 @@ public interface Api {
     Call<CodeResponse> CreateBuilding(@Header("x-access-token") String token, @Path("buildingId") String buildingId);
 
     // GetReports
-    @GET("/api/v1/reports/0/5")
-    Call<Reports> GetReports(@Header("x-access-token") String token);
+    @GET("/api/v1/reports/{offset}/20")
+    Call<Reports> GetReports(@Header("x-access-token") String token, @Path("offset") String offset);
 }

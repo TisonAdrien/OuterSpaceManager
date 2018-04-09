@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -35,8 +36,12 @@ public class GalaxyActivity extends AppCompatActivity implements View.OnClickLis
     private UserResponse[] listUsers;
     private ListView viewUsers;
 
+    private Button nextButton;
+    private Button previousButton;
+
     public static final String PREFS_NAME = "TOKEN_FILE";
     private String token;
+    private String pageGalaxy;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +49,11 @@ public class GalaxyActivity extends AppCompatActivity implements View.OnClickLis
         setContentView(R.layout.activity_galaxy);
         viewUsers = (ListView) findViewById(R.id.listViewGalaxy);
         viewUsers.setOnItemClickListener(this);
+
+        nextButton = (Button) findViewById(R.id.nextButtonGalaxy);
+        nextButton.setOnClickListener(this);
+        previousButton = (Button) findViewById(R.id.previousButtonGalaxy);
+        previousButton.setOnClickListener(this);
 
         LinearLayout rl = (LinearLayout) findViewById(R.id.bg_galaxy);
         FlowingGradientClass grad = new FlowingGradientClass();
@@ -54,10 +64,18 @@ public class GalaxyActivity extends AppCompatActivity implements View.OnClickLis
 
         SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
         token = settings.getString("token","");
+        pageGalaxy = settings.getString("pageGalaxy", "0");
+
+        if(Integer.parseInt(pageGalaxy) > 0){
+            previousButton.setVisibility(View.VISIBLE);
+        }else{
+            previousButton.setVisibility(View.INVISIBLE);
+        }
 
         Retrofit retrofit= new Retrofit.Builder().baseUrl("https://outer-space-manager.herokuapp.com").addConverterFactory(GsonConverterFactory.create()).build();
         Api service = retrofit.create(Api.class);
-        Call<UserTable> request = service.GetUsers(token);
+        Integer offset = Integer.parseInt(pageGalaxy) * 20;
+        Call<UserTable> request = service.GetUsers(token, offset.toString() );
 
         request.enqueue(new Callback<UserTable>() {
             @Override
@@ -73,6 +91,13 @@ public class GalaxyActivity extends AppCompatActivity implements View.OnClickLis
                 }else{
                     //Toast.makeText(getApplicationContext(), "Connection...", Toast.LENGTH_LONG).show();
                     listUsers = response.body().getUsers();
+
+                    if(listUsers.length == 21){
+                        nextButton.setVisibility(View.VISIBLE);
+                    }else{
+                        nextButton.setVisibility(View.INVISIBLE);
+                    }
+
                     //viewUsers.setAdapter(new ArrayAdapter(getApplicationContext(),  android.R.layout.simple_list_item_1, listUsers));
 
                     UserAdapter adapter = new UserAdapter(getApplicationContext(), listUsers );
@@ -90,6 +115,20 @@ public class GalaxyActivity extends AppCompatActivity implements View.OnClickLis
 
     @Override
     public void onClick(View v) {
+
+        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+        SharedPreferences.Editor editor = settings.edit();
+        if(v.getId() == nextButton.getId()){
+            Integer offset = Integer.parseInt(pageGalaxy) + 1;
+            editor.putString("pageGalaxy",offset.toString());
+        }else if(v.getId() == previousButton.getId()){
+            Integer offset = Integer.parseInt(pageGalaxy) - 1;
+            editor.putString("pageGalaxy",offset.toString());
+        }
+        editor.commit();
+
+        Intent myIntent = new Intent(getApplicationContext(), GalaxyActivity.class);
+        startActivity(myIntent);
 
     }
 

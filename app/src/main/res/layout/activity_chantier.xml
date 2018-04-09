@@ -17,10 +17,31 @@
         android:text="@string/chantier" />
 
     <ListView
+        android:id="@+id/listViewReport"
+        android:layout_width="match_parent"
+        android:layout_height="526dp" />
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/listViewReport"
-        />
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/previousButtonChantier"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Previous"
+            android:visibility="invisible" />
+
+        <Button
+            android:id="@+id/nextButtonChantier"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Next"
+            android:visibility="invisible" />
+    </LinearLayout>
 
 
 </LinearLayout>
