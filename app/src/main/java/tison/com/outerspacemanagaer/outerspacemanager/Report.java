@@ -5,31 +5,32 @@ package tison.com.outerspacemanagaer.outerspacemanager;
  */
 
 public class Report {
-     private Ships attackerFleet;
-     private Ships attackerFleetAfterBattle;
+
+     private ShipReport[] attackerFleet;
+     private ShipReport attackerFleetAfterBattle;
      private String date;
      private String dateInv;
-     private Ships defenderFleet;
-     private Ships defenderFleetAfterBattle;
+     private ShipReport[] defenderFleet;
+     private ShipReport defenderFleetAfterBattle;
      private String from;
      private String gasWon;
      private String mineralsWon;
      private String to;
      private String type;
 
-    public Ships getAttackerFleet() {
+    public ShipReport[] getAttackerFleet() {
         return attackerFleet;
     }
 
-    public void setAttackerFleet(Ships attackerFleet) {
+    public void setAttackerFleet(ShipReport[] attackerFleet) {
         this.attackerFleet = attackerFleet;
     }
 
-    public Ships getAttackerFleetAfterBattle() {
+    public ShipReport getAttackerFleetAfterBattle() {
         return attackerFleetAfterBattle;
     }
 
-    public void setAttackerFleetAfterBattle(Ships attackerFleetAfterBattle) {
+    public void setAttackerFleetAfterBattle(ShipReport attackerFleetAfterBattle) {
         this.attackerFleetAfterBattle = attackerFleetAfterBattle;
     }
 
@@ -49,19 +50,19 @@ public class Report {
         this.dateInv = dateInv;
     }
 
-    public Ships getDefenderFleet() {
+    public ShipReport[] getDefenderFleet() {
         return defenderFleet;
     }
 
-    public void setDefenderFleet(Ships defenderFleet) {
+    public void setDefenderFleet(ShipReport[] defenderFleet) {
         this.defenderFleet = defenderFleet;
     }
 
-    public Ships getDefenderFleetAfterBattle() {
+    public ShipReport getDefenderFleetAfterBattle() {
         return defenderFleetAfterBattle;
     }
 
-    public void setDefenderFleetAfterBattle(Ships defenderFleetAfterBattle) {
+    public void setDefenderFleetAfterBattle(ShipReport defenderFleetAfterBattle) {
         this.defenderFleetAfterBattle = defenderFleetAfterBattle;
     }
 
@@ -107,6 +108,9 @@ public class Report {
 
     @Override
     public String toString() {
-        return this.getTo() + " has been " + this.getType() + " by " + this.getFrom() + " !\n\tGas won : " + this.getGasWon() + "\n\tMinerals won : " + this.getMineralsWon();
+        if(this.getType().equals("attacker"))
+            return "You have attacked " + this.getTo() + " !\n\tGas won : " + this.getGasWon() + "\n\tMinerals won : " + this.getMineralsWon();
+        else
+            return "You have been attacked by " + this.getFrom() + " !\n\tGas won : " + this.getGasWon() + "\n\tMinerals won : " + this.getMineralsWon() + " '" + this.getType() + "' ";
     }
 }
