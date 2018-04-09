@@ -1,6 +1,9 @@
 package tison.com.outerspacemanagaer.outerspacemanager;
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -12,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dynamitechetan.flowinggradient.FlowingGradientClass;
+import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -136,29 +140,53 @@ public class FlotteActivity extends AppCompatActivity implements AdapterView.OnI
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Ship ship = flotte[position];
-        ship.setAmount("1");
-        //Toast.makeText(getApplicationContext(), ship.toString(), Toast.LENGTH_LONG).show();
+        final Ship ship = flotte[position];
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("combien voulez-vous construire de " + flotte[position].getName() + " ?");
+        final String[] options = new String[7];
+        options[0] = "1";
+        options[1] = "10";
+        options[2] = "50";
+        options[3] = "100";
+        options[4] = "250";
+        options[5] = "500";
+        options[6] = "1000";
+        builder.setSingleChoiceItems(
+                options,
+                0,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int i) {
+                        ship.setAmount(options[i]);
 
-        Retrofit retrofit= new Retrofit.Builder().baseUrl("https://outer-space-manager.herokuapp.com").addConverterFactory(GsonConverterFactory.create()).build();
-        Api service = retrofit.create(Api.class);
-        Call<CodeResponse> request = service.CreateShips(token, ship, ship.getShipId());
 
-        request.enqueue(new Callback<CodeResponse>() {
-            @Override
-            public void onResponse(Call<CodeResponse> call, Response<CodeResponse> response) {
-                if(response.code() != 200){
-                    Toast.makeText(getApplicationContext(), "Une erreur est survenue, ne spam pas !", Toast.LENGTH_LONG).show();
-                }else{
-                    Toast.makeText(getApplicationContext(), "La construction à commencé !", Toast.LENGTH_LONG).show();
+                        Retrofit retrofit= new Retrofit.Builder().baseUrl("https://outer-space-manager.herokuapp.com").addConverterFactory(GsonConverterFactory.create()).build();
+                        Api service = retrofit.create(Api.class);
+                        Call<CodeResponse> request = service.CreateShips(token, ship, ship.getShipId());
+
+                        request.enqueue(new Callback<CodeResponse>() {
+                            @Override
+                            public void onResponse(Call<CodeResponse> call, Response<CodeResponse> response) {
+                                if(response.code() != 200){
+                                    Toast.makeText(getApplicationContext(), "Une erreur est survenue, ne spam pas !", Toast.LENGTH_LONG).show();
+                                }else{
+                                    Toast.makeText(getApplicationContext(), "La construction de " + ship.getAmount() + " " + ship.getName() + " à commencé !", Toast.LENGTH_LONG).show();
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<CodeResponse> call, Throwable t) {
+                                Toast.makeText(getApplicationContext(), call.toString(), Toast.LENGTH_LONG).show();
+                                Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_LONG).show();
+                            }
+                        });
+
+
+                        dialog.dismiss();
+                    }
                 }
-            }
+        );
+        AlertDialog alert = builder.create();
+        alert.show();
 
-            @Override
-            public void onFailure(Call<CodeResponse> call, Throwable t) {
-                Toast.makeText(getApplicationContext(), call.toString(), Toast.LENGTH_LONG).show();
-                Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_LONG).show();
-            }
-        });
     }
 }
