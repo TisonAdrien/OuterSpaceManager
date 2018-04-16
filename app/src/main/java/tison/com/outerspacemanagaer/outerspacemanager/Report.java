@@ -110,9 +110,32 @@ public class Report {
 
     @Override
     public String toString() {
-        if(this.getType().equals("attacker"))
-            return "You have attacked " + this.getTo() + " !\n\tGas won : " + Math.round(Double.parseDouble(this.getGasWon())) + "\n\tMinerals won : " + Math.round(Double.parseDouble(this.getMineralsWon()));
-        else
-            return "You have been attacked by " + this.getFrom() + " !\n\tGas won : " + Math.round(Double.parseDouble(this.getGasWon())) + "\n\tMinerals won : " + Math.round(Double.parseDouble(this.getMineralsWon()));
+        if(this.getType().equals("attacker")) {
+            String def_fleet = "";
+            if(this.getDefenderFleet() != null) {
+                for (ShipReport ship : this.getDefenderFleet()) {
+                    def_fleet = def_fleet + "\n\t - " + ship.toString();
+                }
+            }
+            return "You have attacked " + this.getTo()
+                    + " !\n\tGas won : " + Math.round(Double.parseDouble(this.getGasWon()))
+                    + "\n\tMinerals won : " + Math.round(Double.parseDouble(this.getMineralsWon()))
+                    + "\n\tDefender fleet : " + def_fleet
+                    + "\n\tAfter battle : " + this.defenderFleetAfterBattle.getSurvivingShips()
+                    + " ships survived";
+        }else {
+            String att_fleet = "";
+            if(this.getAttackerFleet() != null) {
+                for (ShipReport ship : this.getAttackerFleet()) {
+                    att_fleet = att_fleet + "\n\t - " + ship.toString();
+                }
+            }
+            return "You have been attacked by " + this.getFrom()
+                    + " !\n\tGas won : " + Math.round(Double.parseDouble(this.getGasWon()))
+                    + "\n\tMinerals won : " + Math.round(Double.parseDouble(this.getMineralsWon()))
+                    + "\n\tAttacker fleet : " + att_fleet
+                    + "\n\tAfter battle : " + this.attackerFleetAfterBattle.getSurvivingShips()
+                    + " ships survived";
+        }
     }
 }

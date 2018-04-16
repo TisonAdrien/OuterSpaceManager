@@ -102,7 +102,18 @@ public class ShipReport {
     }
 
     public String getName() {
-        return name;
+        if(this.name != null)
+            return name;
+        else{
+            switch (this.getShipId()){
+                case "0": return "Chasseur léger";
+                case "1": return "Chasseur lourd";
+                case "2": return "Sonde d'espionnage";
+                case "3": return "Destroyer";
+                case "4": return "Etoile de la mort";
+                default: return "OVNI";
+            }
+        }
     }
 
     public void setName(String name) {
@@ -139,5 +150,10 @@ public class ShipReport {
 
     public void setTimeToBuild(String timeToBuild) {
         this.timeToBuild = timeToBuild;
+    }
+
+    @Override
+    public String toString() {
+        return this.getAmount() + " " + this.getName();
     }
 }

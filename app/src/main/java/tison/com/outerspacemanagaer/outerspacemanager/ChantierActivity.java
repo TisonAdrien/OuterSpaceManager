@@ -82,9 +82,6 @@ public class ChantierActivity extends AppCompatActivity implements View.OnClickL
                     }
                 }else{
                     reports = response.body().getReports();
-                    for (Report report : reports ) {
-                        Toast.makeText(ChantierActivity.this, report.getAttackerFleetAfterBattle().getCapacity(), Toast.LENGTH_SHORT).show();
-                    }
                     if(reports.length == 0){
                         Toast.makeText(ChantierActivity.this, "Il n'y a aucun rapport pour le moment", Toast.LENGTH_SHORT).show();
                     }else if(reports.length == 21){
