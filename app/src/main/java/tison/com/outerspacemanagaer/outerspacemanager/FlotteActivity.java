@@ -21,6 +21,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -60,83 +62,90 @@ public class FlotteActivity extends AppCompatActivity implements AdapterView.OnI
         SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
         token = settings.getString("token","");
 
-        Retrofit retrofit= new Retrofit.Builder().baseUrl("https://outer-space-manager.herokuapp.com").addConverterFactory(GsonConverterFactory.create()).build();
-        Api service = retrofit.create(Api.class);
 
-        Call<Ships> request = service.GetAllShips(token);
+        final Retrofit retrofit = new Retrofit.Builder().baseUrl("https://outer-space-manager-staging.herokuapp.com").addConverterFactory(GsonConverterFactory.create()).build();
+        final Api service = retrofit.create(Api.class);
 
-        request = service.GetAllShips(token);
-        request.enqueue(new Callback<Ships>() {
+        final Retrofit retrofit_2 = new Retrofit.Builder().baseUrl("https://outer-space-manager-staging.herokuapp.com").addConverterFactory(GsonConverterFactory.create()).build();
+        final Api service_2 = retrofit_2.create(Api.class);
+
+        new Timer().scheduleAtFixedRate(new TimerTask() {
             @Override
-            public void onResponse(Call<Ships> call, Response<Ships> response) {
-                if(response.code() != 200){
-                    Toast.makeText(getApplicationContext(), "Une erreur est survenue !", Toast.LENGTH_LONG).show();
+            public void run() {
+                listFlotte = new ArrayList<Ship>();
 
-                    try {
-                        Toast.makeText(getApplicationContext(), response.errorBody().string(), Toast.LENGTH_LONG).show();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }else{
-                    flotte_empty = response.body().getShips();
-                    listFlotte.addAll(Arrays.asList(flotte_empty));
+                Call<Ships> request = service.GetAllShips(token);
+
+                request = service.GetAllShips(token);
+                request.enqueue(new Callback<Ships>() {
+                    @Override
+                    public void onResponse(Call<Ships> call, Response<Ships> response) {
+                        if (response.code() != 200) {
+                            Toast.makeText(getApplicationContext(), "Une erreur est survenue !", Toast.LENGTH_LONG).show();
+
+                            try {
+                                Toast.makeText(getApplicationContext(), response.errorBody().string(), Toast.LENGTH_LONG).show();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            flotte_empty = response.body().getShips();
+                            listFlotte.addAll(Arrays.asList(flotte_empty));
 
 
 
-
-                    Retrofit retrofit_2 = new Retrofit.Builder().baseUrl("https://outer-space-manager.herokuapp.com").addConverterFactory(GsonConverterFactory.create()).build();
-                    Api service_2 = retrofit_2.create(Api.class);
-                    Call<Ships> request_2 = service_2.GetShips(token);
-                    request_2.enqueue(new Callback<Ships>() {
-                        @Override
-                        public void onResponse(Call<Ships> call, Response<Ships> response) {
-                            if(response.code() != 200){
-                                Toast.makeText(getApplicationContext(), "Une erreur est survenue !", Toast.LENGTH_LONG).show();
-                                findViewById(R.id.loadingPanelFlotte).setVisibility(View.GONE);
-                                try {
-                                    Toast.makeText(getApplicationContext(), response.errorBody().string(), Toast.LENGTH_LONG).show();
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                            }else{
-                                flotte_ok = response.body().getShips();
-
-                                ArrayList<Ship> oldFlotte = listFlotte;
-                                int index = 0;
-                                for (Ship s: flotte_ok) {
-                                    index = 0;
-                                    for (Ship s_empty: oldFlotte){
-                                        if(s.getShipId() == s_empty.getShipId()){
-                                            listFlotte.set(index, s);
+                            Call<Ships> request_2 = service_2.GetShips(token);
+                            request_2.enqueue(new Callback<Ships>() {
+                                @Override
+                                public void onResponse(Call<Ships> call, Response<Ships> response) {
+                                    if (response.code() != 200) {
+                                        Toast.makeText(getApplicationContext(), "Une erreur est survenue !", Toast.LENGTH_LONG).show();
+                                        findViewById(R.id.loadingPanelFlotte).setVisibility(View.GONE);
+                                        try {
+                                            Toast.makeText(getApplicationContext(), response.errorBody().string(), Toast.LENGTH_LONG).show();
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
                                         }
-                                        index++;
+                                    } else {
+                                        flotte_ok = response.body().getShips();
+
+                                        ArrayList<Ship> oldFlotte = listFlotte;
+                                        int index = 0;
+                                        for (Ship s : flotte_ok) {
+                                            index = 0;
+                                            for (Ship s_empty : oldFlotte) {
+                                                if (s.getShipId() == s_empty.getShipId()) {
+                                                    listFlotte.set(index, s);
+                                                }
+                                                index++;
+                                            }
+                                        }
+
+                                        flotte = listFlotte.toArray(new Ship[0]);
+                                        findViewById(R.id.loadingPanelFlotte).setVisibility(View.GONE);
+                                        FlotteAdapter adapter = new FlotteAdapter(getApplicationContext(), flotte);
+                                        listShips.setAdapter(adapter);
                                     }
                                 }
 
+                                @Override
+                                public void onFailure(Call<Ships> call, Throwable t) {
+                                    Toast.makeText(getApplicationContext(), call.toString(), Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_LONG).show();
+                                }
+                            });
 
-                                flotte = listFlotte.toArray(new Ship[0]);
-                                findViewById(R.id.loadingPanelFlotte).setVisibility(View.GONE);
-                                FlotteAdapter adapter = new FlotteAdapter(getApplicationContext(), flotte );
-                                listShips.setAdapter(adapter);
-                            }
                         }
+                    }
 
-                        @Override
-                        public void onFailure(Call<Ships> call, Throwable t) {
-                            Toast.makeText(getApplicationContext(), call.toString(), Toast.LENGTH_LONG).show();
-                            Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_LONG).show();
-                        }
-                    });
-
-                }
+                    @Override
+                    public void onFailure(Call<Ships> call, Throwable t) {
+                        Toast.makeText(getApplicationContext(), call.toString(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_LONG).show();
+                    }
+                });
             }
-
-            @Override
-            public void onFailure(Call<Ships> call, Throwable t) {
-                Toast.makeText(getApplicationContext(), call.toString(), Toast.LENGTH_LONG).show();
-                Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_LONG).show();
-            }
-        });
+        },0,3000);
     }
 
     @Override
@@ -160,7 +169,7 @@ public class FlotteActivity extends AppCompatActivity implements AdapterView.OnI
                         ship.setAmount(options[i]);
 
 
-                        Retrofit retrofit= new Retrofit.Builder().baseUrl("https://outer-space-manager.herokuapp.com").addConverterFactory(GsonConverterFactory.create()).build();
+                        Retrofit retrofit= new Retrofit.Builder().baseUrl("https://outer-space-manager-staging.herokuapp.com").addConverterFactory(GsonConverterFactory.create()).build();
                         Api service = retrofit.create(Api.class);
                         Call<CodeResponse> request = service.CreateShips(token, ship, ship.getShipId());
 
@@ -168,7 +177,10 @@ public class FlotteActivity extends AppCompatActivity implements AdapterView.OnI
                             @Override
                             public void onResponse(Call<CodeResponse> call, Response<CodeResponse> response) {
                                 if(response.code() != 200){
-                                    Toast.makeText(getApplicationContext(), "Une erreur est survenue, ne spam pas !", Toast.LENGTH_LONG).show();
+                                    if(response.code() == 401)
+                                        Toast.makeText(getApplicationContext(), "Vous n'avez pas assez de ressources", Toast.LENGTH_LONG).show();
+                                    else
+                                        Toast.makeText(getApplicationContext(), "Il ne faut pas spamer", Toast.LENGTH_LONG).show();
                                 }else{
                                     Toast.makeText(getApplicationContext(), "La construction de " + ship.getAmount() + " " + ship.getName() + " à commencé !", Toast.LENGTH_LONG).show();
                                 }

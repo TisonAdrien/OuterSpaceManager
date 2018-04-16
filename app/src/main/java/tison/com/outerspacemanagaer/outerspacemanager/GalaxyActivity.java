@@ -72,7 +72,7 @@ public class GalaxyActivity extends AppCompatActivity implements View.OnClickLis
             previousButton.setVisibility(View.INVISIBLE);
         }
 
-        Retrofit retrofit= new Retrofit.Builder().baseUrl("https://outer-space-manager.herokuapp.com").addConverterFactory(GsonConverterFactory.create()).build();
+        Retrofit retrofit= new Retrofit.Builder().baseUrl("https://outer-space-manager-staging.herokuapp.com").addConverterFactory(GsonConverterFactory.create()).build();
         Api service = retrofit.create(Api.class);
         Integer offset = Integer.parseInt(pageGalaxy) * 20;
         Call<UserTable> request = service.GetUsers(token, offset.toString() );

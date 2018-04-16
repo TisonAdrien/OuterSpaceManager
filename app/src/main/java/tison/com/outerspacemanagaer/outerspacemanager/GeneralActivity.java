@@ -3,12 +3,16 @@ package tison.com.outerspacemanagaer.outerspacemanager;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dynamitechetan.flowinggradient.FlowingGradientClass;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -40,32 +44,38 @@ public class GeneralActivity extends AppCompatActivity {
         SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
         token = settings.getString("token","");
 
-        Retrofit retrofit= new Retrofit.Builder().baseUrl("https://outer-space-manager.herokuapp.com").addConverterFactory(GsonConverterFactory.create()).build();
-        Api service = retrofit.create(Api.class);
-        Call<UserResponse> request = service.GetUserInfo(token);
-
-        request.enqueue(new Callback<UserResponse>() {
+        final Retrofit retrofit= new Retrofit.Builder().baseUrl("https://outer-space-manager-staging.herokuapp.com").addConverterFactory(GsonConverterFactory.create()).build();
+        final Api service = retrofit.create(Api.class);
+        new Timer().scheduleAtFixedRate(new TimerTask(){
             @Override
-            public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
-                if(response.code() != 200){
-                    findViewById(R.id.loadingPanelGeneral).setVisibility(View.GONE);
-                    Toast.makeText(getApplicationContext(), "Une erreur est survenue !", Toast.LENGTH_LONG).show();
-                }else{
-                    //Toast.makeText(getApplicationContext(), "Connection...", Toast.LENGTH_LONG).show();
-                    UserResponse user = response.body();
-                    String toDisplay = user.getUsername() + " (" + user.getPoints() + " points)\n";
-                    toDisplay += "Gaz : " + user.getGas() + "\n";
-                    toDisplay += "Mineraux : " + user.getMinerals() + "\n";
-                    findViewById(R.id.loadingPanelGeneral).setVisibility(View.GONE);
-                    txtInfos.setText(toDisplay);
-                }
-            }
+            public void run(){
+                Call<UserResponse> request = service.GetUserInfo(token);
+                request.enqueue(new Callback<UserResponse>() {
+                    @Override
+                    public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
+                        if(response.code() != 200){
+                            findViewById(R.id.loadingPanelGeneral).setVisibility(View.GONE);
+                            Toast.makeText(getApplicationContext(), "Une erreur est survenue !", Toast.LENGTH_LONG).show();
+                        }else{
+                            //Toast.makeText(getApplicationContext(), "Connection...", Toast.LENGTH_LONG).show();
+                            UserResponse user = response.body();
+                            String toDisplay = user.getUsername() + " (" + user.getPoints() + " points)\n";
+                            Double gas = Double.parseDouble(user.getGas());
+                            Double minerals = Double.parseDouble(user.getMinerals());
+                            toDisplay += "Gaz : " + Math.round(gas) + "\n";
+                            toDisplay += "Mineraux : " +  Math.round(minerals) + "\n";
+                            findViewById(R.id.loadingPanelGeneral).setVisibility(View.GONE);
+                            txtInfos.setText(toDisplay);
+                        }
+                    }
 
-            @Override
-            public void onFailure(Call<UserResponse> call, Throwable t) {
-                Toast.makeText(getApplicationContext(), call.toString(), Toast.LENGTH_LONG).show();
-                Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_LONG).show();
+                    @Override
+                    public void onFailure(Call<UserResponse> call, Throwable t) {
+                        Toast.makeText(getApplicationContext(), call.toString(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_LONG).show();
+                    }
+                });
             }
-        });
+        },0,5000);
     }
 }

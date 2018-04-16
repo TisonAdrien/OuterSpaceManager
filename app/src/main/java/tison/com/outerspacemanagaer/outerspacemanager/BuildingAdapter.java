@@ -2,20 +2,27 @@ package tison.com.outerspacemanagaer.outerspacemanager;
 
 import android.content.Context;
 
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
+import java.util.Date;
 import java.util.List;
 
 
@@ -27,6 +34,8 @@ public class BuildingAdapter extends ArrayAdapter<Building> {
 
     private final Context context;
     private final Building[] values;
+    private ProgressBar pbPercentBuild;
+    public static final String PREFS_NAME = "TOKEN_FILE";
     public BuildingAdapter(Context context, Building[] values) {
         super(context,R.layout.activity_galaxy, values);
         this.context = context;
@@ -38,20 +47,51 @@ public class BuildingAdapter extends ArrayAdapter<Building> {
         View rowView = inflater.inflate(R.layout.row_building, parent, false);
         TextView textView = (TextView) rowView.findViewById(R.id.labelBuilding);
         ImageView imageView = (ImageView) rowView.findViewById(R.id.iconBuilding);
+        ProgressBar pbPercentBuild = (ProgressBar) rowView.findViewById(R.id.progressBarBuilding);
+
+
+        SharedPreferences settings = getContext().getSharedPreferences(PREFS_NAME, 0);
+        Long timeStartBuilding = settings.getLong("timeStartConstruction"+values[position].getName(), 0);
+        if (timeStartBuilding != 0)
+        {
+            if(values[position].getBuilding().equals("false")) {
+                settings.edit().remove("timeStartConstruction" + values[position].getName()).commit();
+                pbPercentBuild.setVisibility(View.INVISIBLE);
+            }
+            Integer level0 = Integer.parseInt(values[position].getTimeToBuildLevel0());
+            Integer byLevel = Integer.parseInt(values[position].getTimeToBuildByLevel());
+            Integer level = Integer.parseInt(values[position].getLevel());
+            Integer time =  level0 + (level * byLevel);
+
+            pbPercentBuild.setMax(time);
+            Long timeNow = new Date().getTime()/1000;
+            Long difference = timeNow - timeStartBuilding;
+            Double percent = Double.parseDouble(difference+"") / Double.parseDouble(time +"");
+            if (percent < 1)
+            {
+                pbPercentBuild.setProgress(Integer.parseInt(difference+""));
+                pbPercentBuild.setVisibility(View.VISIBLE);
+            }
+        }
+
 
         textView.setText(values[position].toString());
 
-        new DownLoadImageTask(imageView).execute(values[position].getImageUrl());
+        new DownLoadImageTask(imageView, getContext(), values[position].getName()).execute(values[position].getImageUrl());
 
         return rowView;
     }
+
 }
 
 class DownLoadImageTask extends AsyncTask<String,Void,Bitmap> {
     ImageView imageView;
-
-    public DownLoadImageTask(ImageView imageView){
+    Context context;
+    String salt;
+    public DownLoadImageTask(ImageView imageView, Context context, String salt){
         this.imageView = imageView;
+        this.context = context;
+        this.salt = salt;
     }
 
     protected Bitmap doInBackground(String...urls){

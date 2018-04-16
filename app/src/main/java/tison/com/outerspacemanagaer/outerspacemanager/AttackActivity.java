@@ -90,7 +90,7 @@ public class AttackActivity extends AppCompatActivity implements View.OnClickLis
         ships.setShips(shipList);
 
 
-        Retrofit retrofit= new Retrofit.Builder().baseUrl("https://outer-space-manager.herokuapp.com").addConverterFactory(GsonConverterFactory.create()).build();
+        Retrofit retrofit= new Retrofit.Builder().baseUrl("https://outer-space-manager-staging.herokuapp.com").addConverterFactory(GsonConverterFactory.create()).build();
         Api service = retrofit.create(Api.class);
         Call<CodeResponse> request = service.AttackUser(token, ships, user_to_attack);
 

@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.hardware.display.DisplayManager;
 import android.os.Build;
 import android.os.Handler;
 import android.provider.Settings;
@@ -24,7 +25,10 @@ import android.widget.Toast;
 import com.dynamitechetan.flowinggradient.FlowingGradientClass;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -60,36 +64,41 @@ public class BuildingActivity extends AppCompatActivity implements AdapterView.O
         SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
         token = settings.getString("token","");
 
-        Retrofit retrofit= new Retrofit.Builder().baseUrl("https://outer-space-manager.herokuapp.com").addConverterFactory(GsonConverterFactory.create()).build();
-        Api service = retrofit.create(Api.class);
-        Call<Buildings> request = service.GetBuildings(token);
 
-        request.enqueue(new Callback<Buildings>() {
+        final Retrofit retrofit= new Retrofit.Builder().baseUrl("https://outer-space-manager-staging.herokuapp.com").addConverterFactory(GsonConverterFactory.create()).build();
+        final Api service = retrofit.create(Api.class);
+
+        new Timer().scheduleAtFixedRate(new TimerTask() {
             @Override
-            public void onResponse(Call<Buildings> call, Response<Buildings> response) {
-                if(response.code() != 200){
-                    Toast.makeText(getApplicationContext(), "Une erreur est survenue !", Toast.LENGTH_LONG).show();
-                    findViewById(R.id.loadingPanelBuilding).setVisibility(View.GONE);
-                    try {
-                        Toast.makeText(getApplicationContext(), response.errorBody().string(), Toast.LENGTH_LONG).show();
-                    } catch (IOException e) {
-                        e.printStackTrace();
+            public void run() {
+                Call<Buildings> request = service.GetBuildings(token);
+                request.enqueue(new Callback<Buildings>() {
+                    @Override
+                    public void onResponse(Call<Buildings> call, Response<Buildings> response) {
+                        if (response.code() != 200) {
+                            Toast.makeText(getApplicationContext(), "Une erreur est survenue !", Toast.LENGTH_LONG).show();
+                            findViewById(R.id.loadingPanelBuilding).setVisibility(View.GONE);
+                            try {
+                                Toast.makeText(getApplicationContext(), response.errorBody().string(), Toast.LENGTH_LONG).show();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            buildings = response.body().getBuildings();
+                            findViewById(R.id.loadingPanelBuilding).setVisibility(View.GONE);
+                            BuildingAdapter adapter = new BuildingAdapter(getApplicationContext(), buildings);
+                            listBuilding.setAdapter(adapter);
+                        }
                     }
-                }else{
-                    buildings = response.body().getBuildings();
-                    findViewById(R.id.loadingPanelBuilding).setVisibility(View.GONE);
-                    BuildingAdapter adapter = new BuildingAdapter(getApplicationContext(), buildings );
-                    listBuilding.setAdapter(adapter);
-                }
-            }
 
-            @Override
-            public void onFailure(Call<Buildings> call, Throwable t) {
-                Toast.makeText(getApplicationContext(), call.toString(), Toast.LENGTH_LONG).show();
-                Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_LONG).show();
+                    @Override
+                    public void onFailure(Call<Buildings> call, Throwable t) {
+                        Toast.makeText(getApplicationContext(), call.toString(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_LONG).show();
+                    }
+                });
             }
-        });
-
+        },0,1000);
     }
 
     @Override
@@ -97,7 +106,7 @@ public class BuildingActivity extends AppCompatActivity implements AdapterView.O
         final Building building = buildings[position];
         //Toast.makeText(getApplicationContext(), search.getName(), Toast.LENGTH_LONG).show();
 
-        Retrofit retrofit= new Retrofit.Builder().baseUrl("https://outer-space-manager.herokuapp.com").addConverterFactory(GsonConverterFactory.create()).build();
+        Retrofit retrofit= new Retrofit.Builder().baseUrl("https://outer-space-manager-staging.herokuapp.com").addConverterFactory(GsonConverterFactory.create()).build();
         Api service = retrofit.create(Api.class);
         Call<CodeResponse> request = service.CreateBuilding(token, Integer.toString(position));
 
@@ -114,6 +123,14 @@ public class BuildingActivity extends AppCompatActivity implements AdapterView.O
                 }else{
                     Toast.makeText(getApplicationContext(), "La construction à commencé !", Toast.LENGTH_LONG).show();
                     Double time =  Double.parseDouble(building.getTimeToBuildLevel0()) + ( Double.parseDouble(building.getTimeToBuildByLevel()) * Double.parseDouble(building.getLevel()));
+
+
+                    SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+                    Date dateCreation = new Date();
+                    Long timeConstruct = dateCreation.getTime()/1000;
+                    SharedPreferences.Editor editor = settings.edit();
+                    editor.putLong("timeStartConstruction"+building.getName(), timeConstruct);
+                    editor.apply();
 
                     Handler handler = new Handler();
                     handler.postDelayed(new Runnable() {

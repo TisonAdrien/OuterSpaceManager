@@ -65,7 +65,7 @@ public class ChantierActivity extends AppCompatActivity implements View.OnClickL
         listViewReport = (ListView) findViewById(R.id.listViewReport);
 
 
-        Retrofit retrofit= new Retrofit.Builder().baseUrl("https://outer-space-manager.herokuapp.com").addConverterFactory(GsonConverterFactory.create()).build();
+        Retrofit retrofit= new Retrofit.Builder().baseUrl("https://outer-space-manager-staging.herokuapp.com").addConverterFactory(GsonConverterFactory.create()).build();
         Api service = retrofit.create(Api.class);
         Integer offset = Integer.parseInt(pageChantier) * 20;
         Call<Reports> request = service.GetReports(token, offset.toString());

@@ -22,7 +22,10 @@ import com.dynamitechetan.flowinggradient.FlowingGradientClass;
 import org.w3c.dom.Text;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -57,38 +60,43 @@ public class SearchActivity extends AppCompatActivity implements AdapterView.OnI
         SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
         token = settings.getString("token","");
 
-        Retrofit retrofit= new Retrofit.Builder().baseUrl("https://outer-space-manager.herokuapp.com").addConverterFactory(GsonConverterFactory.create()).build();
-        Api service = retrofit.create(Api.class);
-        Call<Searches> request = service.GetSearchesForUser(token);
-
-        request.enqueue(new Callback<Searches>() {
+        final Retrofit retrofit= new Retrofit.Builder().baseUrl("https://outer-space-manager-staging.herokuapp.com").addConverterFactory(GsonConverterFactory.create()).build();
+        final Api service = retrofit.create(Api.class);
+        new Timer().scheduleAtFixedRate(new TimerTask() {
             @Override
-            public void onResponse(Call<Searches> call, Response<Searches> response) {
-                if(response.code() != 200){
-                    Toast.makeText(getApplicationContext(), "Une erreur est survenue !", Toast.LENGTH_LONG).show();
-                    findViewById(R.id.loadingPanelSearch).setVisibility(View.GONE);
-                    try {
-                        Toast.makeText(getApplicationContext(), response.errorBody().string(), Toast.LENGTH_LONG).show();
-                    } catch (IOException e) {
-                        e.printStackTrace();
+            public void run() {
+                Call<Searches> request = service.GetSearchesForUser(token);
+
+                request.enqueue(new Callback<Searches>() {
+                    @Override
+                    public void onResponse(Call<Searches> call, Response<Searches> response) {
+                        if (response.code() != 200) {
+                            Toast.makeText(getApplicationContext(), "Une erreur est survenue !", Toast.LENGTH_LONG).show();
+                            findViewById(R.id.loadingPanelSearch).setVisibility(View.GONE);
+                            try {
+                                Toast.makeText(getApplicationContext(), response.errorBody().string(), Toast.LENGTH_LONG).show();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            searches = response.body().getSearches();
+                            //Toast.makeText(getApplicationContext(), buildings.toString(), Toast.LENGTH_LONG).show();
+
+                            //listSearch.setAdapter(new ArrayAdapter(getApplicationContext(),  android.R.layout.simple_list_item_1, searches));
+                            findViewById(R.id.loadingPanelSearch).setVisibility(View.GONE);
+                            SearchAdpater adapter = new SearchAdpater(getApplicationContext(), searches);
+                            listSearch.setAdapter(adapter);
+                        }
                     }
-                }else{
-                    searches = response.body().getSearches();
-                    //Toast.makeText(getApplicationContext(), buildings.toString(), Toast.LENGTH_LONG).show();
 
-                    //listSearch.setAdapter(new ArrayAdapter(getApplicationContext(),  android.R.layout.simple_list_item_1, searches));
-                    findViewById(R.id.loadingPanelSearch).setVisibility(View.GONE);
-                    SearchAdpater adapter = new SearchAdpater(getApplicationContext(), searches );
-                    listSearch.setAdapter(adapter);
-                }
+                    @Override
+                    public void onFailure(Call<Searches> call, Throwable t) {
+                        Toast.makeText(getApplicationContext(), call.toString(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_LONG).show();
+                    }
+                });
             }
-
-            @Override
-            public void onFailure(Call<Searches> call, Throwable t) {
-                Toast.makeText(getApplicationContext(), call.toString(), Toast.LENGTH_LONG).show();
-                Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_LONG).show();
-            }
-        });
+        },0,1000);
     }
 
     @Override
@@ -96,7 +104,7 @@ public class SearchActivity extends AppCompatActivity implements AdapterView.OnI
         final Search search = searches[position];
         //Toast.makeText(getApplicationContext(), search.getName(), Toast.LENGTH_LONG).show();
 
-        Retrofit retrofit= new Retrofit.Builder().baseUrl("https://outer-space-manager.herokuapp.com").addConverterFactory(GsonConverterFactory.create()).build();
+        Retrofit retrofit= new Retrofit.Builder().baseUrl("https://outer-space-manager-staging.herokuapp.com").addConverterFactory(GsonConverterFactory.create()).build();
         Api service = retrofit.create(Api.class);
         Call<CodeResponse> request = service.StartSearchesForUser(token, Integer.toString(position));
 
@@ -112,6 +120,13 @@ public class SearchActivity extends AppCompatActivity implements AdapterView.OnI
                     Toast.makeText(getApplicationContext(), "La recherche à commencé !", Toast.LENGTH_LONG).show();
 
                     Double time =  Double.parseDouble(search.getTimeToBuildLevel0()) + ( Double.parseDouble(search.getTimeToBuildByLevel()) * Double.parseDouble(search.getLevel()));
+
+                    SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+                    Date dateCreation = new Date();
+                    Long timeConstruct = dateCreation.getTime()/1000;
+                    SharedPreferences.Editor editor = settings.edit();
+                    editor.putLong("timeStartSearch"+search.getName(), timeConstruct);
+                    editor.apply();
 
                     Handler handler = new Handler();
                     handler.postDelayed(new Runnable() {

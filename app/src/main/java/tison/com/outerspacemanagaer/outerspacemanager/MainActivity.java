@@ -13,6 +13,9 @@ import android.widget.Toast;
 
 import com.dynamitechetan.flowinggradient.FlowingGradientClass;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -70,29 +73,34 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
         token = settings.getString("token","");
 
-        Retrofit retrofit= new Retrofit.Builder().baseUrl("https://outer-space-manager.herokuapp.com").addConverterFactory(GsonConverterFactory.create()).build();
-        Api service = retrofit.create(Api.class);
-        Call<UserResponse> request = service.GetUserInfo(token);
+        final Retrofit retrofit= new Retrofit.Builder().baseUrl("https://outer-space-manager-staging.herokuapp.com").addConverterFactory(GsonConverterFactory.create()).build();
+        final Api service = retrofit.create(Api.class);
 
-        request.enqueue(new Callback<UserResponse>() {
+        new Timer().scheduleAtFixedRate(new TimerTask(){
             @Override
-            public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
-                if(response.code() != 200){
-                    Toast.makeText(getApplicationContext(), "Une erreur est survenue !", Toast.LENGTH_LONG).show();
-                }else{
-                    //Toast.makeText(getApplicationContext(), "Connection...", Toast.LENGTH_LONG).show();
-                    txtPoints.setText("Points : " + response.body().getPoints());
-                    txtUsername.setText(response.body().getUsername());
-                }
-            }
+            public void run() {
+                Call<UserResponse> request = service.GetUserInfo(token);
 
-            @Override
-            public void onFailure(Call<UserResponse> call, Throwable t) {
-                Toast.makeText(getApplicationContext(), call.toString(), Toast.LENGTH_LONG).show();
-                Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_LONG).show();
-            }
-        });
+                request.enqueue(new Callback<UserResponse>() {
+                    @Override
+                    public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
+                        if (response.code() != 200) {
+                            Toast.makeText(getApplicationContext(), "Une erreur est survenue !", Toast.LENGTH_LONG).show();
+                        } else {
+                            //Toast.makeText(getApplicationContext(), "Connection...", Toast.LENGTH_LONG).show();
+                            txtPoints.setText("Points : " + response.body().getPoints());
+                            txtUsername.setText(response.body().getUsername());
+                        }
+                    }
 
+                    @Override
+                    public void onFailure(Call<UserResponse> call, Throwable t) {
+                        Toast.makeText(getApplicationContext(), call.toString(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+        },0,3000);
     }
 
     @Override

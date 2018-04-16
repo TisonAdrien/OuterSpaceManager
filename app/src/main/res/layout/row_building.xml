@@ -14,16 +14,30 @@
         android:layout_marginBottom="5dp" >
     </ImageView>
 
-    <TextView
-        android:id="@+id/labelBuilding"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="20dp"
-        android:layout_marginLeft="10dp"
-        android:text="text"
-        android:textColor="@android:color/white"
-        android:textSize="15sp" >
-    </TextView>
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/labelBuilding"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="20dp"
+            android:textColor="@android:color/white"
+            android:textSize="15sp">
+
+        </TextView>
+
+        <ProgressBar
+            android:id="@+id/progressBarBuilding"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:visibility="invisible" />
+    </LinearLayout>
 
 </LinearLayout>
