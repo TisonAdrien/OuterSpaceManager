@@ -30,6 +30,8 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import static java.lang.Double.parseDouble;
+
 public class FlotteActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
     private ListView listShips;
@@ -38,6 +40,9 @@ public class FlotteActivity extends AppCompatActivity implements AdapterView.OnI
     private Ship[] flotte_empty;
     private Ship[] flotte_ok;
     private ArrayList<Ship> listFlotte;
+
+    private String minerals;
+    private String gas;
 
     public static final String PREFS_NAME = "TOKEN_FILE";
     private String token;
@@ -144,62 +149,117 @@ public class FlotteActivity extends AppCompatActivity implements AdapterView.OnI
                         Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_LONG).show();
                     }
                 });
+
+
+                Call<UserResponse> request3 = service.GetUserInfo(token);
+                request3.enqueue(new Callback<UserResponse>() {
+                    @Override
+                    public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
+                        if (response.code() == 200) {
+                            minerals = response.body().getMinerals();
+                            gas = response.body().getGas();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<UserResponse> call, Throwable t) {
+                        // Do nothing
+                    }
+                });
+
             }
-        },0,3000);
+        },0,5000);
+
+
+
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         final Ship ship = flotte[position];
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("combien voulez-vous construire de " + flotte[position].getName() + " ?");
-        final String[] options = new String[7];
-        options[0] = "1";
-        options[1] = "10";
-        options[2] = "50";
-        options[3] = "100";
-        options[4] = "250";
-        options[5] = "500";
-        options[6] = "1000";
-        builder.setSingleChoiceItems(
-                options,
-                0,
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int i) {
-                        ship.setAmount(options[i]);
+
+        Integer minerals_cost = Integer.parseInt(ship.getMineralCost());
+        Integer gas_cost = Integer.parseInt(ship.getGasCost());
+
+        Long nb_minerals = Math.round(Double.parseDouble(minerals));
+        Long nb_gas = Math.round(Double.parseDouble(gas));
+
+        Long max = Long.getLong("0");
+        if(minerals_cost > 0)
+            max = nb_minerals / minerals_cost;
+        else if(gas_cost > 0)
+            max = nb_gas / gas_cost;
+
+        if( (nb_gas / gas_cost) < max){
+            max = nb_gas / gas_cost;
+        }
+        
+        Integer maximum = Integer.parseInt(max.toString());
+        final String[] options;
+        if(maximum <= 0){
+            options = new String[1];
+            options[0] = "Pas assez de ressources";
+        }else if(maximum < 3 ){
+            options = new String[maximum];
+            Integer i = 0;
+            while (i < maximum){
+                Integer val = i + 1;
+                options[i] = val.toString();
+                i = val;
+            }
+        }else{
+            options = new String[3];
+            options[0] = "1";
+            Integer middle = maximum / 2;
+            options[1] = middle.toString();
+            options[2] = maximum.toString();
+        }
+        
+        if(maximum <= 0){
+            Toast.makeText(this, "Pas assez de ressources...", Toast.LENGTH_SHORT).show();
+        }else {
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("combien voulez-vous construire de " + flotte[position].getName() + " ?");
+            builder.setSingleChoiceItems(
+                    options,
+                    0,
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int i) {
+                            ship.setAmount(options[i]);
 
 
-                        Retrofit retrofit= new Retrofit.Builder().baseUrl("https://outer-space-manager-staging.herokuapp.com").addConverterFactory(GsonConverterFactory.create()).build();
-                        Api service = retrofit.create(Api.class);
-                        Call<CodeResponse> request = service.CreateShips(token, ship, ship.getShipId());
+                            Retrofit retrofit = new Retrofit.Builder().baseUrl("https://outer-space-manager-staging.herokuapp.com").addConverterFactory(GsonConverterFactory.create()).build();
+                            Api service = retrofit.create(Api.class);
+                            Call<CodeResponse> request = service.CreateShips(token, ship, ship.getShipId());
 
-                        request.enqueue(new Callback<CodeResponse>() {
-                            @Override
-                            public void onResponse(Call<CodeResponse> call, Response<CodeResponse> response) {
-                                if(response.code() != 200){
-                                    if(response.code() == 401)
-                                        Toast.makeText(getApplicationContext(), "Vous n'avez pas assez de ressources", Toast.LENGTH_LONG).show();
-                                    else
-                                        Toast.makeText(getApplicationContext(), "Il ne faut pas spamer", Toast.LENGTH_LONG).show();
-                                }else{
-                                    Toast.makeText(getApplicationContext(), "La construction de " + ship.getAmount() + " " + ship.getName() + " à commencé !", Toast.LENGTH_LONG).show();
+                            request.enqueue(new Callback<CodeResponse>() {
+                                @Override
+                                public void onResponse(Call<CodeResponse> call, Response<CodeResponse> response) {
+                                    if (response.code() != 200) {
+                                        if (response.code() == 401)
+                                            Toast.makeText(getApplicationContext(), "Vous n'avez pas assez de ressources", Toast.LENGTH_LONG).show();
+                                        else
+                                            Toast.makeText(getApplicationContext(), "Il ne faut pas spamer", Toast.LENGTH_LONG).show();
+                                    } else {
+                                        Toast.makeText(getApplicationContext(), "La construction de " + ship.getAmount() + " " + ship.getName() + " à commencé !", Toast.LENGTH_LONG).show();
+                                    }
                                 }
-                            }
 
-                            @Override
-                            public void onFailure(Call<CodeResponse> call, Throwable t) {
-                                Toast.makeText(getApplicationContext(), call.toString(), Toast.LENGTH_LONG).show();
-                                Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_LONG).show();
-                            }
-                        });
+                                @Override
+                                public void onFailure(Call<CodeResponse> call, Throwable t) {
+                                    Toast.makeText(getApplicationContext(), call.toString(), Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_LONG).show();
+                                }
+                            });
 
 
-                        dialog.dismiss();
+                            dialog.dismiss();
+                        }
                     }
-                }
-        );
-        AlertDialog alert = builder.create();
-        alert.show();
-
+            );
+            AlertDialog alert = builder.create();
+            alert.show();
+        }
     }
 }

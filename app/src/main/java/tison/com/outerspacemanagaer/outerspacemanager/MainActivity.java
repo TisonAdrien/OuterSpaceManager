@@ -100,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
                 });
             }
-        },0,3000);
+        },0,5000);
     }
 
     @Override

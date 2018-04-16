@@ -28,6 +28,21 @@ public class Building {
     private String name;
     private String timeToBuildByLevel;
     private String timeToBuildLevel0;
+    private String timeToShow;
+
+    public void setTimeToShow(String timeToShow){ this.timeToShow = timeToShow; }
+
+    public String getTimeToShow(){
+        if(this.timeToShow != null){
+            return this.timeToShow;
+        }else{
+            Integer level0 = Integer.parseInt(this.getTimeToBuildLevel0());
+            Integer byLevel = Integer.parseInt(this.getTimeToBuildByLevel());
+            Integer level = Integer.parseInt(this.getLevel());
+            Integer time =  level0 + (level * byLevel);
+            return time.toString();
+        }
+    }
 
     public void setName(String name) {
         this.name = name;
@@ -110,6 +125,7 @@ public class Building {
         if(eff != null){
             eff = eff.replace("speed_building", "vitesse de construction");
             eff = eff.replace("speed_fleet", "vitesse de la flotte");
+            eff = eff.replace("mineral_modifier","vitesse de ressourcement");
         }else{
             eff = "vitesse de ressourcement";
         }
@@ -153,12 +169,7 @@ public class Building {
 
     @Override
     public String toString() {
-        Integer level0 = Integer.parseInt(this.getTimeToBuildLevel0());
-        Integer byLevel = Integer.parseInt(this.getTimeToBuildByLevel());
-        Integer level = Integer.parseInt(this.getLevel());
-        Integer time =  level0 + (level * byLevel);
-
-
+        Integer time = Integer.parseInt(this.getTimeToShow());
         Integer minutes = (int) Math.floor(time / 60);
         Integer seconds = (int) Math.floor(time % 60);
         Integer costMineral = (Integer.parseInt(this.getMineralCostLevel0()) + ( Integer.parseInt(this.getMineralCostByLevel()) * Integer.parseInt(this.getLevel())));

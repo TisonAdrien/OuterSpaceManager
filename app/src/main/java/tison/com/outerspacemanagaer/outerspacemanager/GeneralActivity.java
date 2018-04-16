@@ -76,6 +76,6 @@ public class GeneralActivity extends AppCompatActivity {
                     }
                 });
             }
-        },0,5000);
+        },0,1000);
     }
 }

@@ -66,6 +66,8 @@ public class BuildingAdapter extends ArrayAdapter<Building> {
             pbPercentBuild.setMax(time);
             Long timeNow = new Date().getTime()/1000;
             Long difference = timeNow - timeStartBuilding;
+            Long timeToShow = time - difference;
+            values[position].setTimeToShow(timeToShow.toString());
             Double percent = Double.parseDouble(difference+"") / Double.parseDouble(time +"");
             if (percent < 1)
             {
@@ -77,7 +79,15 @@ public class BuildingAdapter extends ArrayAdapter<Building> {
 
         textView.setText(values[position].toString());
 
-        new DownLoadImageTask(imageView, getContext(), values[position].getName()).execute(values[position].getImageUrl());
+        String bitmap = settings.getString("bitmap_"+values[position].getName(),null);
+        if(bitmap != null){
+            byte[] imageAsBytes = Base64.decode(bitmap.getBytes(), Base64.DEFAULT);
+            imageView.setImageBitmap(BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length));
+        }else{
+            new DownLoadImageTask(imageView, getContext(), values[position].getName()).execute(values[position].getImageUrl());
+        }
+
+
 
         return rowView;
     }
@@ -112,6 +122,21 @@ class DownLoadImageTask extends AsyncTask<String,Void,Bitmap> {
      */
     protected void onPostExecute(Bitmap result){
         imageView.setImageBitmap(result);
+
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        result.compress(Bitmap.CompressFormat.PNG, 100, baos); //bm is the bitmap object
+        byte[] b = baos.toByteArray();
+        String encoded = Base64.encodeToString(b, Base64.DEFAULT);
+
+
+        SharedPreferences settings = context.getSharedPreferences("TOKEN_FILE", 0);
+        Date dateCreation = new Date();
+        Long timeConstruct = dateCreation.getTime()/1000;
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putString("bitmap_"+salt, encoded);
+        editor.apply();
+
     }
 }
 

@@ -18,6 +18,26 @@ public class Search {
     private String timeToBuildByLevel;
     private String timeToBuildLevel0;
 
+    public String getTimeToShow() {
+        if(this.timeToShow != null){
+            return this.timeToShow;
+        }else{
+            Integer level0 = Integer.parseInt(this.getTimeToBuildLevel0());
+            Integer byLevel = Integer.parseInt(this.getTimeToBuildByLevel());
+            Integer level = Integer.parseInt(this.getLevel());
+            Integer time =  level0 + (level * byLevel);
+            return time.toString();
+        }
+    }
+
+    public void setTimeToShow(String timeToShow) {
+        this.timeToShow = timeToShow;
+    }
+
+    private String timeToShow;
+
+
+
     public void setTimeToBuildLevel0(String timeToBuildLevel0) {
         this.timeToBuildLevel0 = timeToBuildLevel0;
     }
@@ -126,7 +146,7 @@ public class Search {
 
     @Override
     public String toString() {
-        Integer time =  Integer.parseInt(this.getTimeToBuildLevel0()) + ( Integer.parseInt(this.getTimeToBuildByLevel()) * Integer.parseInt(this.getLevel()));
+        Integer time = Integer.parseInt(this.getTimeToShow());
         Integer minutes = (int) Math.floor(time / 60);
         Integer seconds = (int) Math.floor(time % 60);
 

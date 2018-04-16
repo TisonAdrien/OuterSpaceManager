@@ -54,6 +54,8 @@ public class SearchAdpater extends ArrayAdapter<Search> {
             progressBarSearch.setMax(time);
             Long timeNow = new Date().getTime()/1000;
             Long difference = timeNow - timeStartBuilding;
+            Long timeToShow = time - difference;
+            values[position].setTimeToShow(timeToShow.toString());
             Double percent = Double.parseDouble(difference+"") / Double.parseDouble(time +"");
             if (percent < 1)
             {
