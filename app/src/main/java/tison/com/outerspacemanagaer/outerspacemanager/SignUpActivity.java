@@ -2,6 +2,7 @@ package tison.com.outerspacemanagaer.outerspacemanager;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -19,6 +20,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import com.dynamitechetan.flowinggradient.FlowingGradientClass;
+
 
 public class SignUpActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -45,6 +47,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         inputPassword = (EditText) findViewById(R.id.inputPassword);
 
         LinearLayout rl = (LinearLayout) findViewById(R.id.bg_login);
+
         FlowingGradientClass grad = new FlowingGradientClass();
         grad.setBackgroundResource(R.drawable.translate)
                 .onLinearLayout(rl)

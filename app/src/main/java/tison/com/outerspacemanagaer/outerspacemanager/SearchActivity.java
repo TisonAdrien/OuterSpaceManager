@@ -42,6 +42,8 @@ public class SearchActivity extends AppCompatActivity implements AdapterView.OnI
     public static final String PREFS_NAME = "TOKEN_FILE";
     private String token;
 
+    private Timer timer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,44 +61,6 @@ public class SearchActivity extends AppCompatActivity implements AdapterView.OnI
 
         SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
         token = settings.getString("token","");
-
-        final Retrofit retrofit= new Retrofit.Builder().baseUrl("https://outer-space-manager-staging.herokuapp.com").addConverterFactory(GsonConverterFactory.create()).build();
-        final Api service = retrofit.create(Api.class);
-        new Timer().scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                Call<Searches> request = service.GetSearchesForUser(token);
-
-                request.enqueue(new Callback<Searches>() {
-                    @Override
-                    public void onResponse(Call<Searches> call, Response<Searches> response) {
-                        if (response.code() != 200) {
-                            Toast.makeText(getApplicationContext(), "Une erreur est survenue !", Toast.LENGTH_LONG).show();
-                            findViewById(R.id.loadingPanelSearch).setVisibility(View.GONE);
-                            try {
-                                Toast.makeText(getApplicationContext(), response.errorBody().string(), Toast.LENGTH_LONG).show();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        } else {
-                            searches = response.body().getSearches();
-                            //Toast.makeText(getApplicationContext(), buildings.toString(), Toast.LENGTH_LONG).show();
-
-                            //listSearch.setAdapter(new ArrayAdapter(getApplicationContext(),  android.R.layout.simple_list_item_1, searches));
-                            findViewById(R.id.loadingPanelSearch).setVisibility(View.GONE);
-                            SearchAdpater adapter = new SearchAdpater(getApplicationContext(), searches);
-                            listSearch.setAdapter(adapter);
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<Searches> call, Throwable t) {
-                        Toast.makeText(getApplicationContext(), call.toString(), Toast.LENGTH_LONG).show();
-                        Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_LONG).show();
-                    }
-                });
-            }
-        },0,1000);
     }
 
     @Override
@@ -169,5 +133,62 @@ public class SearchActivity extends AppCompatActivity implements AdapterView.OnI
                 Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        final Retrofit retrofit= new Retrofit.Builder().baseUrl("https://outer-space-manager-staging.herokuapp.com").addConverterFactory(GsonConverterFactory.create()).build();
+        final Api service = retrofit.create(Api.class);
+        timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                Call<Searches> request = service.GetSearchesForUser(token);
+
+                request.enqueue(new Callback<Searches>() {
+                    @Override
+                    public void onResponse(Call<Searches> call, Response<Searches> response) {
+                        if (response.code() != 200) {
+                            Toast.makeText(getApplicationContext(), "Une erreur est survenue !", Toast.LENGTH_LONG).show();
+                            findViewById(R.id.loadingPanelSearch).setVisibility(View.GONE);
+                            try {
+                                Toast.makeText(getApplicationContext(), response.errorBody().string(), Toast.LENGTH_LONG).show();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            searches = response.body().getSearches();
+                            //Toast.makeText(getApplicationContext(), buildings.toString(), Toast.LENGTH_LONG).show();
+
+                            //listSearch.setAdapter(new ArrayAdapter(getApplicationContext(),  android.R.layout.simple_list_item_1, searches));
+                            findViewById(R.id.loadingPanelSearch).setVisibility(View.GONE);
+                            SearchAdpater adapter = new SearchAdpater(getApplicationContext(), searches);
+                            listSearch.setAdapter(adapter);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Searches> call, Throwable t) {
+                        Toast.makeText(getApplicationContext(), call.toString(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+        },0,1000);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        timer.cancel();
+        timer.purge();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        timer.cancel();
+        timer.purge();
     }
 }
