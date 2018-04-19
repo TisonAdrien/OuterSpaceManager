@@ -3,9 +3,11 @@ package tison.com.outerspacemanagaer.outerspacemanager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Point;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Display;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -49,17 +51,18 @@ public class FlotteActivity extends AppCompatActivity implements AdapterView.OnI
 
     private Timer timer;
 
+    private BackgroundView backgroundView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_flotte);
 
-        LinearLayout rl = (LinearLayout) findViewById(R.id.bg_flotte);
-        FlowingGradientClass grad = new FlowingGradientClass();
-        grad.setBackgroundResource(R.drawable.translate)
-                .onLinearLayout(rl)
-                .setTransitionDuration(4000)
-                .start();
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        backgroundView = (BackgroundView) findViewById(R.id.backgroundViewFlotte);
+        backgroundView.animate(this, size.x, size.y);
 
         listShips = (ListView) findViewById(R.id.listViewFlotte);
         listShips.setOnItemClickListener(this);
@@ -163,6 +166,7 @@ public class FlotteActivity extends AppCompatActivity implements AdapterView.OnI
     @Override
     protected void onResume() {
         super.onResume();
+        backgroundView.resume();
         final Retrofit retrofit = new Retrofit.Builder().baseUrl("https://outer-space-manager-staging.herokuapp.com").addConverterFactory(GsonConverterFactory.create()).build();
         final Api service = retrofit.create(Api.class);
 
@@ -275,6 +279,7 @@ public class FlotteActivity extends AppCompatActivity implements AdapterView.OnI
         super.onDestroy();
         timer.cancel();
         timer.purge();
+        backgroundView.pause();
     }
 
     @Override
@@ -282,5 +287,6 @@ public class FlotteActivity extends AppCompatActivity implements AdapterView.OnI
         super.onPause();
         timer.cancel();
         timer.purge();
+        backgroundView.pause();
     }
 }
