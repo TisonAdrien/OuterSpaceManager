@@ -100,8 +100,7 @@ public class ChantierActivity extends AppCompatActivity implements View.OnClickL
 
             @Override
             public void onFailure(Call<Reports> call, Throwable t) {
-                Toast.makeText(getApplicationContext(), call.toString(), Toast.LENGTH_LONG).show();
-                Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Aucune réponse, vérifiez votre connection internet", Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -119,7 +118,7 @@ public class ChantierActivity extends AppCompatActivity implements View.OnClickL
         }
         editor.commit();
 
-        Intent myIntent = new Intent(getApplicationContext(), GalaxyActivity.class);
+        Intent myIntent = new Intent(getApplicationContext(), ChantierActivity.class);
         startActivity(myIntent);
     }
 

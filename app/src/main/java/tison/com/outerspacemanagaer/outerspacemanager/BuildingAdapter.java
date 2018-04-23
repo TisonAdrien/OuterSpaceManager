@@ -3,6 +3,7 @@ package tison.com.outerspacemanagaer.outerspacemanager;
 import android.content.Context;
 
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -77,17 +78,19 @@ public class BuildingAdapter extends ArrayAdapter<Building> {
         }
 
 
-        textView.setText(values[position].toString());
-
-        String bitmap = settings.getString("bitmap_"+values[position].getName(),null);
-        if(bitmap != null){
-            byte[] imageAsBytes = Base64.decode(bitmap.getBytes(), Base64.DEFAULT);
-            imageView.setImageBitmap(BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length));
+        if(context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
+            imageView.setVisibility(View.INVISIBLE);
+            textView.setText(values[position].getName() + "\n Niveau " + values[position].getLevel());
         }else{
-            new DownLoadImageTask(imageView, getContext(), values[position].getName()).execute(values[position].getImageUrl());
+            textView.setText(values[position].toString());
+            String bitmap = settings.getString("bitmap_"+values[position].getName(),null);
+            if(bitmap != null){
+                byte[] imageAsBytes = Base64.decode(bitmap.getBytes(), Base64.DEFAULT);
+                imageView.setImageBitmap(BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length));
+            }else{
+                new DownLoadImageTask(imageView, getContext(), values[position].getName()).execute(values[position].getImageUrl());
+            }
         }
-
-
 
         return rowView;
     }

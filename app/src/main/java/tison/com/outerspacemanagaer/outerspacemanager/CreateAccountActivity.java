@@ -78,8 +78,7 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
 
                 @Override
                 public void onFailure(Call<AuthResponse> call, Throwable t) {
-                    Toast.makeText(getApplicationContext(), call.toString(), Toast.LENGTH_LONG).show();
-                    Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Aucune réponse, vérifiez votre connection internet", Toast.LENGTH_LONG).show();
                 }
             });
         }

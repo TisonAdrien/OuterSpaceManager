@@ -27,7 +27,7 @@
         <activity android:name=".FlotteActivity" />
         <activity android:name=".SearchActivity" />
         <activity android:name=".ChantierActivity" />
-        <activity android:name=".AttackActivity"></activity>
+        <activity android:name=".AttackActivity"/>
     </application>
 
 </manifest>

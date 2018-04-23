@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.Point;
 import android.hardware.display.DisplayManager;
 import android.os.Build;
@@ -21,10 +22,12 @@ import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dynamitechetan.flowinggradient.FlowingGradientClass;
+import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.util.Date;
@@ -76,72 +79,78 @@ public class BuildingActivity extends AppCompatActivity implements AdapterView.O
         final Building building = buildings[position];
         //Toast.makeText(getApplicationContext(), search.getName(), Toast.LENGTH_LONG).show();
 
-        Retrofit retrofit= new Retrofit.Builder().baseUrl("https://outer-space-manager-staging.herokuapp.com").addConverterFactory(GsonConverterFactory.create()).build();
-        Api service = retrofit.create(Api.class);
-        Call<CodeResponse> request = service.CreateBuilding(token, Integer.toString(position));
+        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
+        {
+            BuildDetailsFragment fragB = (BuildDetailsFragment)getSupportFragmentManager().findFragmentById(R.id.fragDetails);
+            fragB.fillContent(buildings[position]);
+            fragB.updateProgressBar();
+        }else {
+            Retrofit retrofit = new Retrofit.Builder().baseUrl("https://outer-space-manager-staging.herokuapp.com").addConverterFactory(GsonConverterFactory.create()).build();
+            Api service = retrofit.create(Api.class);
+            Call<CodeResponse> request = service.CreateBuilding(token, Integer.toString(position));
 
-        request.enqueue(new Callback<CodeResponse>() {
-            @Override
-            public void onResponse(Call<CodeResponse> call, Response<CodeResponse> response) {
-                if(response.code() != 200){
-                    if(building.getBuilding().equals("true")) {
-                        Toast.makeText(getApplicationContext(), "La construction n'est pas terminée !", Toast.LENGTH_LONG).show();
-                    }
-                    else {
-                        Toast.makeText(getApplicationContext(), "Vous n'avez pas assez de ressources !", Toast.LENGTH_LONG).show();
-                    }
-                }else{
-                    Toast.makeText(getApplicationContext(), "La construction à commencé !", Toast.LENGTH_LONG).show();
-                    Double time =  Double.parseDouble(building.getTimeToBuildLevel0()) + ( Double.parseDouble(building.getTimeToBuildByLevel()) * Double.parseDouble(building.getLevel()));
-
-
-                    SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-                    Date dateCreation = new Date();
-                    Long timeConstruct = dateCreation.getTime()/1000;
-                    SharedPreferences.Editor editor = settings.edit();
-                    editor.putLong("timeStartConstruction"+building.getName(), timeConstruct);
-                    editor.apply();
-
-                    Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            Intent resultIntent = new Intent(getApplicationContext(), MainActivity.class);
-                            PendingIntent resultPendingIntent =
-                                    PendingIntent.getActivity(
-                                            getApplicationContext(),
-                                            0,
-                                            resultIntent,
-                                            PendingIntent.FLAG_UPDATE_CURRENT
-                                    );
-                            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getApplicationContext())
-                                    .setContentTitle("Outer Space Manager - Construction terminée")
-                                    .setContentText("Hey ! Ton " + building.getName() + " est terminé !")
-                                    .setContentIntent(resultPendingIntent)
-                                    .setSmallIcon(R.drawable.logo)
-                                    .setSound(Settings.System.DEFAULT_NOTIFICATION_URI)
-                                    .setVibrate(new long[]{1000, 1000, 0, 0, 1000, 1000})
-                                    .setShowWhen(true)
-                                    .setWhen(System.currentTimeMillis());
-
-                            // Sets an ID for the notification
-                            int mNotificationId = 001;
-                            // Gets an instance of the NotificationManager service
-                            NotificationManager mNotifyMgr =
-                                    (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-                            // Builds the notification and issues it.
-                            mNotifyMgr.notify(mNotificationId, mBuilder.build());
+            request.enqueue(new Callback<CodeResponse>() {
+                @Override
+                public void onResponse(Call<CodeResponse> call, Response<CodeResponse> response) {
+                    if (response.code() != 200) {
+                        if (building.getBuilding().equals("true")) {
+                            Toast.makeText(getApplicationContext(), "La construction n'est pas terminée !", Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Vous n'avez pas assez de ressources !", Toast.LENGTH_LONG).show();
                         }
-                    }, Double.doubleToLongBits(time*1000));
-                }
-            }
+                    } else {
+                        Toast.makeText(getApplicationContext(), "La construction à commencé !", Toast.LENGTH_LONG).show();
+                        Double time = Double.parseDouble(building.getTimeToBuildLevel0()) + (Double.parseDouble(building.getTimeToBuildByLevel()) * Double.parseDouble(building.getLevel()));
 
-            @Override
-            public void onFailure(Call<CodeResponse> call, Throwable t) {
-                Toast.makeText(getApplicationContext(), call.toString(), Toast.LENGTH_LONG).show();
-                Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_LONG).show();
-            }
-        });
+
+                        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+                        Date dateCreation = new Date();
+                        Long timeConstruct = dateCreation.getTime() / 1000;
+                        SharedPreferences.Editor editor = settings.edit();
+                        editor.putLong("timeStartConstruction" + building.getName(), timeConstruct);
+                        editor.apply();
+
+                        Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                Intent resultIntent = new Intent(getApplicationContext(), MainActivity.class);
+                                PendingIntent resultPendingIntent =
+                                        PendingIntent.getActivity(
+                                                getApplicationContext(),
+                                                0,
+                                                resultIntent,
+                                                PendingIntent.FLAG_UPDATE_CURRENT
+                                        );
+                                NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getApplicationContext())
+                                        .setContentTitle("Outer Space Manager - Construction terminée")
+                                        .setContentText("Hey ! Ton " + building.getName() + " est terminé !")
+                                        .setContentIntent(resultPendingIntent)
+                                        .setSmallIcon(R.drawable.logo)
+                                        .setSound(Settings.System.DEFAULT_NOTIFICATION_URI)
+                                        .setVibrate(new long[]{1000, 1000, 0, 0, 1000, 1000})
+                                        .setShowWhen(true)
+                                        .setWhen(System.currentTimeMillis());
+
+                                // Sets an ID for the notification
+                                int mNotificationId = 001;
+                                // Gets an instance of the NotificationManager service
+                                NotificationManager mNotifyMgr =
+                                        (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                                // Builds the notification and issues it.
+                                mNotifyMgr.notify(mNotificationId, mBuilder.build());
+                            }
+                        }, Double.doubleToLongBits(time * 1000));
+                    }
+
+                }
+
+                @Override
+                public void onFailure(Call<CodeResponse> call, Throwable t) {
+                    Toast.makeText(getApplicationContext(), "Aucune réponse, vérifiez votre connection internet", Toast.LENGTH_LONG).show();
+                }
+            });
+        }
     }
 
     @Override
@@ -170,6 +179,7 @@ public class BuildingActivity extends AppCompatActivity implements AdapterView.O
                         } else {
                             buildings = response.body().getBuildings();
                             findViewById(R.id.loadingPanelBuilding).setVisibility(View.GONE);
+
                             BuildingAdapter adapter = new BuildingAdapter(getApplicationContext(), buildings);
                             listBuilding.setAdapter(adapter);
                         }
@@ -177,8 +187,7 @@ public class BuildingActivity extends AppCompatActivity implements AdapterView.O
 
                     @Override
                     public void onFailure(Call<Buildings> call, Throwable t) {
-                        Toast.makeText(getApplicationContext(), call.toString(), Toast.LENGTH_LONG).show();
-                        Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "Aucune réponse, vérifiez votre connection internet", Toast.LENGTH_LONG).show();
                     }
                 });
             }

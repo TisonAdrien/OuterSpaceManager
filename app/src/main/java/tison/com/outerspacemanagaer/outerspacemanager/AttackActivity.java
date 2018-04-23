@@ -115,8 +115,7 @@ public class AttackActivity extends AppCompatActivity implements View.OnClickLis
 
             @Override
             public void onFailure(Call<CodeResponse> call, Throwable t) {
-                Toast.makeText(getApplicationContext(), call.toString(), Toast.LENGTH_LONG).show();
-                Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Aucune réponse, vérifiez votre connection internet", Toast.LENGTH_LONG).show();
             }
         });
     }

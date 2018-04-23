@@ -132,8 +132,7 @@ public class SearchActivity extends AppCompatActivity implements AdapterView.OnI
 
             @Override
             public void onFailure(Call<CodeResponse> call, Throwable t) {
-                Toast.makeText(getApplicationContext(), call.toString(), Toast.LENGTH_LONG).show();
-                Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Aucune réponse, vérifiez votre connection internet", Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -174,8 +173,7 @@ public class SearchActivity extends AppCompatActivity implements AdapterView.OnI
 
                     @Override
                     public void onFailure(Call<Searches> call, Throwable t) {
-                        Toast.makeText(getApplicationContext(), call.toString(), Toast.LENGTH_LONG).show();
-                        Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "Aucune réponse, vérifiez votre connection internet", Toast.LENGTH_LONG).show();
                     }
                 });
             }

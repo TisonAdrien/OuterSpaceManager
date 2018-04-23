@@ -238,8 +238,7 @@ public class FlotteActivity extends AppCompatActivity implements AdapterView.OnI
 
                                 @Override
                                 public void onFailure(Call<Ships> call, Throwable t) {
-                                    Toast.makeText(getApplicationContext(), call.toString(), Toast.LENGTH_LONG).show();
-                                    Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getApplicationContext(), "Aucune réponse, vérifiez votre connection internet", Toast.LENGTH_LONG).show();
                                 }
                             });
 
@@ -248,8 +247,7 @@ public class FlotteActivity extends AppCompatActivity implements AdapterView.OnI
 
                     @Override
                     public void onFailure(Call<Ships> call, Throwable t) {
-                        Toast.makeText(getApplicationContext(), call.toString(), Toast.LENGTH_LONG).show();
-                        Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "Aucune réponse, vérifiez votre connection internet", Toast.LENGTH_LONG).show();
                     }
                 });
 
@@ -266,7 +264,7 @@ public class FlotteActivity extends AppCompatActivity implements AdapterView.OnI
 
                     @Override
                     public void onFailure(Call<UserResponse> call, Throwable t) {
-                        // Do nothing
+                        Toast.makeText(getApplicationContext(), "Aucune réponse, vérifiez votre connection internet", Toast.LENGTH_LONG).show();
                     }
                 });
 

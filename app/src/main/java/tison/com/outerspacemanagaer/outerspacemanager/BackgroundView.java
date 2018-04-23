@@ -93,11 +93,7 @@ public class BackgroundView extends SurfaceView implements Runnable {
 
     public void pause(){
         animated = false;
-        try {
-            //stopping the thread
-            thread.join();
-        } catch (InterruptedException e) {
-        }
+        thread.interrupt();
     }
 
     public void resume(){
