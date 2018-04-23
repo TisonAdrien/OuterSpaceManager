@@ -1,9 +1,11 @@
 package tison.com.outerspacemanagaer.outerspacemanager;
 
 import android.content.SharedPreferences;
+import android.graphics.Point;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Display;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -27,26 +29,36 @@ public class GeneralActivity extends AppCompatActivity {
     public static final String PREFS_NAME = "TOKEN_FILE";
     private String token;
 
+    private Timer timer;
+
+    private BackgroundView backgroundView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_general);
 
-        LinearLayout rl = (LinearLayout) findViewById(R.id.bg_general);
-        FlowingGradientClass grad = new FlowingGradientClass();
-        grad.setBackgroundResource(R.drawable.translate)
-                .onLinearLayout(rl)
-                .setTransitionDuration(4000)
-                .start();
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        backgroundView = (BackgroundView) findViewById(R.id.backgroundViewGeneral);
+        backgroundView.animate(this, size.x, size.y);
 
         txtInfos = (TextView) findViewById(R.id.txtInfos);
 
         SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
         token = settings.getString("token","");
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        backgroundView.resume();
         final Retrofit retrofit= new Retrofit.Builder().baseUrl("https://outer-space-manager-staging.herokuapp.com").addConverterFactory(GsonConverterFactory.create()).build();
         final Api service = retrofit.create(Api.class);
-        new Timer().scheduleAtFixedRate(new TimerTask(){
+
+        timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask(){
             @Override
             public void run(){
                 Call<UserResponse> request = service.GetUserInfo(token);
@@ -77,5 +89,21 @@ public class GeneralActivity extends AppCompatActivity {
                 });
             }
         },0,1000);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        timer.cancel();
+        timer.purge();
+        backgroundView.pause();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        timer.cancel();
+        timer.purge();
+        backgroundView.pause();
     }
 }

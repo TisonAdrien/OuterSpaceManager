@@ -2,8 +2,10 @@ package tison.com.outerspacemanagaer.outerspacemanager;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Point;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Display;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -39,17 +41,18 @@ public class AttackActivity extends AppCompatActivity implements View.OnClickLis
     public static final String PREFS_NAME = "TOKEN_FILE";
     private String token;
 
+    private BackgroundView backgroundView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_attack);
 
-        LinearLayout rl = (LinearLayout) findViewById(R.id.bg_attack);
-        FlowingGradientClass grad = new FlowingGradientClass();
-        grad.setBackgroundResource(R.drawable.translate)
-                .onLinearLayout(rl)
-                .setTransitionDuration(4000)
-                .start();
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        backgroundView = (BackgroundView) findViewById(R.id.backgroundViewAttack);
+        backgroundView.animate(this, size.x, size.y);
 
         SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
         token = settings.getString("token","");
@@ -116,5 +119,23 @@ public class AttackActivity extends AppCompatActivity implements View.OnClickLis
                 Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        backgroundView.pause();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        backgroundView.pause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        backgroundView.resume();
     }
 }

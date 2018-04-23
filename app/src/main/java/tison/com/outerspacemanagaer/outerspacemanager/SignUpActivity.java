@@ -2,8 +2,11 @@ package tison.com.outerspacemanagaer.outerspacemanager;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Point;
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Display;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -20,6 +23,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import com.dynamitechetan.flowinggradient.FlowingGradientClass;
 
+
 public class SignUpActivity extends AppCompatActivity implements View.OnClickListener {
 
     private Button btnValider;
@@ -33,6 +37,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     //SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
     //private String token = settings.getString("token","");
 
+    private BackgroundView backgroundView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,12 +49,12 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         inputUsername = (EditText) findViewById(R.id.inputUsername);
         inputPassword = (EditText) findViewById(R.id.inputPassword);
 
-        LinearLayout rl = (LinearLayout) findViewById(R.id.bg_login);
-        FlowingGradientClass grad = new FlowingGradientClass();
-        grad.setBackgroundResource(R.drawable.translate)
-                .onLinearLayout(rl)
-                .setTransitionDuration(4000)
-                .start();
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        backgroundView = (BackgroundView) findViewById(R.id.backgroundViewLogin);
+        backgroundView.animate(this, size.x, size.y);
+
 
         btnCreate.setOnClickListener(this);
         btnValider.setOnClickListener(this);
@@ -103,5 +108,19 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         }
 
 
+    }
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        backgroundView.pause();
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        backgroundView.resume();
     }
 }

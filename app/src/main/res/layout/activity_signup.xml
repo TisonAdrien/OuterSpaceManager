@@ -1,11 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout_login"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintHorizontal_bias="0.0"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    tools:context="tison.com.outerspacemanagaer.outerspacemanager.SignUpActivity">
+
+    <view
+        class="tison.com.outerspacemanagaer.outerspacemanager.BackgroundView"
+        android:id="@+id/backgroundViewLogin"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginRight="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/bg_login"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
         android:id="@+id/bg_login"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
 
         android:orientation="vertical"
@@ -16,13 +44,13 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:context="tison.com.outerspacemanagaer.outerspacemanager.SignUpActivity">
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="wrap_content"
-        android:layout_height="130sp"
-        app:srcCompat="@drawable/logo" />
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="wrap_content"
+            android:layout_height="130sp"
+            app:srcCompat="@drawable/logo" />
 
-    <LinearLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
@@ -121,4 +149,7 @@
         </LinearLayout>
 
 
-</LinearLayout>
+    </LinearLayout>
+
+
+</android.support.constraint.ConstraintLayout>

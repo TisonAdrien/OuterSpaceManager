@@ -1,8 +1,10 @@
 package tison.com.outerspacemanagaer.outerspacemanager;
 
 import android.content.Intent;
+import android.graphics.Point;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Display;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -27,6 +29,7 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
     private EditText inputPassword;
     private Button btnConnect;
 
+    private BackgroundView backgroundView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,12 +42,11 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
         inputPassword = (EditText) findViewById(R.id.inputPassword);
         inputEmail = (EditText) findViewById(R.id.inputEmail);
 
-        LinearLayout rl = (LinearLayout) findViewById(R.id.bg_create);
-        FlowingGradientClass grad = new FlowingGradientClass();
-        grad.setBackgroundResource(R.drawable.translate)
-                .onLinearLayout(rl)
-                .setTransitionDuration(4000)
-                .start();
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        backgroundView = (BackgroundView) findViewById(R.id.backgroundViewCreate);
+        backgroundView.animate(this, size.x, size.y);
 
         btnValider.setOnClickListener(this);
         btnConnect.setOnClickListener(this);
@@ -88,5 +90,23 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
         }
 
 
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        backgroundView.pause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        backgroundView.pause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        backgroundView.resume();
     }
 }

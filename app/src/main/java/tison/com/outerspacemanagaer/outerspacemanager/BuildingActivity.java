@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Point;
 import android.hardware.display.DisplayManager;
 import android.os.Build;
 import android.os.Handler;
@@ -13,6 +14,7 @@ import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Display;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -46,6 +48,10 @@ public class BuildingActivity extends AppCompatActivity implements AdapterView.O
     public static final String PREFS_NAME = "TOKEN_FILE";
     private String token;
 
+    private Timer timer;
+
+    private BackgroundView backgroundView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,51 +60,15 @@ public class BuildingActivity extends AppCompatActivity implements AdapterView.O
         listBuilding = (ListView) findViewById(R.id.listViewBuilding);
         listBuilding.setOnItemClickListener(this);
 
-        LinearLayout rl = (LinearLayout) findViewById(R.id.bg_building);
-        FlowingGradientClass grad = new FlowingGradientClass();
-        grad.setBackgroundResource(R.drawable.translate)
-                .onLinearLayout(rl)
-                .setTransitionDuration(4000)
-                .start();
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        backgroundView = (BackgroundView) findViewById(R.id.backgroundViewBuilding);
+        backgroundView.animate(this, size.x, size.y);
 
         SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
         token = settings.getString("token","");
 
-
-        final Retrofit retrofit= new Retrofit.Builder().baseUrl("https://outer-space-manager-staging.herokuapp.com").addConverterFactory(GsonConverterFactory.create()).build();
-        final Api service = retrofit.create(Api.class);
-
-        new Timer().scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                Call<Buildings> request = service.GetBuildings(token);
-                request.enqueue(new Callback<Buildings>() {
-                    @Override
-                    public void onResponse(Call<Buildings> call, Response<Buildings> response) {
-                        if (response.code() != 200) {
-                            Toast.makeText(getApplicationContext(), "Une erreur est survenue !", Toast.LENGTH_LONG).show();
-                            findViewById(R.id.loadingPanelBuilding).setVisibility(View.GONE);
-                            try {
-                                Toast.makeText(getApplicationContext(), response.errorBody().string(), Toast.LENGTH_LONG).show();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        } else {
-                            buildings = response.body().getBuildings();
-                            findViewById(R.id.loadingPanelBuilding).setVisibility(View.GONE);
-                            BuildingAdapter adapter = new BuildingAdapter(getApplicationContext(), buildings);
-                            listBuilding.setAdapter(adapter);
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<Buildings> call, Throwable t) {
-                        Toast.makeText(getApplicationContext(), call.toString(), Toast.LENGTH_LONG).show();
-                        Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_LONG).show();
-                    }
-                });
-            }
-        },0,1000);
     }
 
     @Override
@@ -173,4 +143,63 @@ public class BuildingActivity extends AppCompatActivity implements AdapterView.O
             }
         });
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        backgroundView.resume();
+        final Retrofit retrofit= new Retrofit.Builder().baseUrl("https://outer-space-manager-staging.herokuapp.com").addConverterFactory(GsonConverterFactory.create()).build();
+        final Api service = retrofit.create(Api.class);
+
+        timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                Call<Buildings> request = service.GetBuildings(token);
+                request.enqueue(new Callback<Buildings>() {
+                    @Override
+                    public void onResponse(Call<Buildings> call, Response<Buildings> response) {
+                        if (response.code() != 200) {
+                            Toast.makeText(getApplicationContext(), "Une erreur est survenue !", Toast.LENGTH_LONG).show();
+                            findViewById(R.id.loadingPanelBuilding).setVisibility(View.GONE);
+                            try {
+                                Toast.makeText(getApplicationContext(), response.errorBody().string(), Toast.LENGTH_LONG).show();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            buildings = response.body().getBuildings();
+                            findViewById(R.id.loadingPanelBuilding).setVisibility(View.GONE);
+                            BuildingAdapter adapter = new BuildingAdapter(getApplicationContext(), buildings);
+                            listBuilding.setAdapter(adapter);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Buildings> call, Throwable t) {
+                        Toast.makeText(getApplicationContext(), call.toString(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+        },0,1000);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        timer.cancel();
+        timer.purge();
+        backgroundView.pause();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        timer.cancel();
+        timer.purge();
+        backgroundView.pause();
+    }
+
+
 }

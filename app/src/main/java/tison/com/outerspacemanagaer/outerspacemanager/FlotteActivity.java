@@ -3,9 +3,11 @@ package tison.com.outerspacemanagaer.outerspacemanager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Point;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Display;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -47,17 +49,20 @@ public class FlotteActivity extends AppCompatActivity implements AdapterView.OnI
     public static final String PREFS_NAME = "TOKEN_FILE";
     private String token;
 
+    private Timer timer;
+
+    private BackgroundView backgroundView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_flotte);
 
-        LinearLayout rl = (LinearLayout) findViewById(R.id.bg_flotte);
-        FlowingGradientClass grad = new FlowingGradientClass();
-        grad.setBackgroundResource(R.drawable.translate)
-                .onLinearLayout(rl)
-                .setTransitionDuration(4000)
-                .start();
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        backgroundView = (BackgroundView) findViewById(R.id.backgroundViewFlotte);
+        backgroundView.animate(this, size.x, size.y);
 
         listShips = (ListView) findViewById(R.id.listViewFlotte);
         listShips.setOnItemClickListener(this);
@@ -66,111 +71,6 @@ public class FlotteActivity extends AppCompatActivity implements AdapterView.OnI
 
         SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
         token = settings.getString("token","");
-
-
-        final Retrofit retrofit = new Retrofit.Builder().baseUrl("https://outer-space-manager-staging.herokuapp.com").addConverterFactory(GsonConverterFactory.create()).build();
-        final Api service = retrofit.create(Api.class);
-
-        final Retrofit retrofit_2 = new Retrofit.Builder().baseUrl("https://outer-space-manager-staging.herokuapp.com").addConverterFactory(GsonConverterFactory.create()).build();
-        final Api service_2 = retrofit_2.create(Api.class);
-
-        new Timer().scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                listFlotte = new ArrayList<Ship>();
-
-                Call<Ships> request = service.GetAllShips(token);
-
-                request = service.GetAllShips(token);
-                request.enqueue(new Callback<Ships>() {
-                    @Override
-                    public void onResponse(Call<Ships> call, Response<Ships> response) {
-                        if (response.code() != 200) {
-                            Toast.makeText(getApplicationContext(), "Une erreur est survenue !", Toast.LENGTH_LONG).show();
-
-                            try {
-                                Toast.makeText(getApplicationContext(), response.errorBody().string(), Toast.LENGTH_LONG).show();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        } else {
-                            flotte_empty = response.body().getShips();
-                            listFlotte.addAll(Arrays.asList(flotte_empty));
-
-
-
-                            Call<Ships> request_2 = service_2.GetShips(token);
-                            request_2.enqueue(new Callback<Ships>() {
-                                @Override
-                                public void onResponse(Call<Ships> call, Response<Ships> response) {
-                                    if (response.code() != 200) {
-                                        Toast.makeText(getApplicationContext(), "Une erreur est survenue !", Toast.LENGTH_LONG).show();
-                                        findViewById(R.id.loadingPanelFlotte).setVisibility(View.GONE);
-                                        try {
-                                            Toast.makeText(getApplicationContext(), response.errorBody().string(), Toast.LENGTH_LONG).show();
-                                        } catch (IOException e) {
-                                            e.printStackTrace();
-                                        }
-                                    } else {
-                                        flotte_ok = response.body().getShips();
-
-                                        ArrayList<Ship> oldFlotte = listFlotte;
-                                        int index = 0;
-                                        for (Ship s : flotte_ok) {
-                                            index = 0;
-                                            for (Ship s_empty : oldFlotte) {
-                                                if (s.getShipId() == s_empty.getShipId()) {
-                                                    listFlotte.set(index, s);
-                                                }
-                                                index++;
-                                            }
-                                        }
-
-                                        flotte = listFlotte.toArray(new Ship[0]);
-                                        findViewById(R.id.loadingPanelFlotte).setVisibility(View.GONE);
-                                        FlotteAdapter adapter = new FlotteAdapter(getApplicationContext(), flotte);
-                                        listShips.setAdapter(adapter);
-                                    }
-                                }
-
-                                @Override
-                                public void onFailure(Call<Ships> call, Throwable t) {
-                                    Toast.makeText(getApplicationContext(), call.toString(), Toast.LENGTH_LONG).show();
-                                    Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_LONG).show();
-                                }
-                            });
-
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<Ships> call, Throwable t) {
-                        Toast.makeText(getApplicationContext(), call.toString(), Toast.LENGTH_LONG).show();
-                        Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_LONG).show();
-                    }
-                });
-
-
-                Call<UserResponse> request3 = service.GetUserInfo(token);
-                request3.enqueue(new Callback<UserResponse>() {
-                    @Override
-                    public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
-                        if (response.code() == 200) {
-                            minerals = response.body().getMinerals();
-                            gas = response.body().getGas();
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<UserResponse> call, Throwable t) {
-                        // Do nothing
-                    }
-                });
-
-            }
-        },0,5000);
-
-
 
     }
 
@@ -261,5 +161,132 @@ public class FlotteActivity extends AppCompatActivity implements AdapterView.OnI
             AlertDialog alert = builder.create();
             alert.show();
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        backgroundView.resume();
+        final Retrofit retrofit = new Retrofit.Builder().baseUrl("https://outer-space-manager-staging.herokuapp.com").addConverterFactory(GsonConverterFactory.create()).build();
+        final Api service = retrofit.create(Api.class);
+
+        final Retrofit retrofit_2 = new Retrofit.Builder().baseUrl("https://outer-space-manager-staging.herokuapp.com").addConverterFactory(GsonConverterFactory.create()).build();
+        final Api service_2 = retrofit_2.create(Api.class);
+
+        final Retrofit retrofit_3 = new Retrofit.Builder().baseUrl("https://outer-space-manager-staging.herokuapp.com").addConverterFactory(GsonConverterFactory.create()).build();
+        final Api service_3 = retrofit_3.create(Api.class);
+
+        timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                listFlotte = new ArrayList<Ship>();
+
+                Call<Ships> request = service.GetAllShips(token);
+
+                request = service.GetAllShips(token);
+                request.enqueue(new Callback<Ships>() {
+                    @Override
+                    public void onResponse(Call<Ships> call, Response<Ships> response) {
+                        if (response.code() != 200) {
+                            Toast.makeText(getApplicationContext(), "Une erreur est survenue !", Toast.LENGTH_LONG).show();
+
+                            try {
+                                Toast.makeText(getApplicationContext(), response.errorBody().string(), Toast.LENGTH_LONG).show();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            flotte_empty = response.body().getShips();
+                            listFlotte.addAll(Arrays.asList(flotte_empty));
+
+
+
+                            Call<Ships> request_2 = service_2.GetShips(token);
+                            request_2.enqueue(new Callback<Ships>() {
+                                @Override
+                                public void onResponse(Call<Ships> call, Response<Ships> response) {
+                                    if (response.code() != 200) {
+                                        Toast.makeText(getApplicationContext(), "Une erreur est survenue !", Toast.LENGTH_LONG).show();
+                                        findViewById(R.id.loadingPanelFlotte).setVisibility(View.GONE);
+                                        try {
+                                            Toast.makeText(getApplicationContext(), response.errorBody().string(), Toast.LENGTH_LONG).show();
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
+                                        }
+                                    } else {
+                                        flotte_ok = response.body().getShips();
+
+                                        ArrayList<Ship> oldFlotte = listFlotte;
+                                        int index = 0;
+                                        for (Ship s : flotte_ok) {
+                                            index = 0;
+                                            for (Ship s_empty : oldFlotte) {
+                                                if (s.getShipId().equals(s_empty.getShipId())) {
+                                                    listFlotte.set(index, s);
+                                                }
+                                                index++;
+                                            }
+                                        }
+
+                                        flotte = listFlotte.toArray(new Ship[0]);
+                                        findViewById(R.id.loadingPanelFlotte).setVisibility(View.GONE);
+                                        FlotteAdapter adapter = new FlotteAdapter(getApplicationContext(), flotte);
+                                        listShips.setAdapter(adapter);
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Call<Ships> call, Throwable t) {
+                                    Toast.makeText(getApplicationContext(), call.toString(), Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_LONG).show();
+                                }
+                            });
+
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Ships> call, Throwable t) {
+                        Toast.makeText(getApplicationContext(), call.toString(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_LONG).show();
+                    }
+                });
+
+
+                Call<UserResponse> request3 = service_3.GetUserInfo(token);
+                request3.enqueue(new Callback<UserResponse>() {
+                    @Override
+                    public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
+                        if (response.code() == 200) {
+                            minerals = response.body().getMinerals();
+                            gas = response.body().getGas();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<UserResponse> call, Throwable t) {
+                        // Do nothing
+                    }
+                });
+
+            }
+        },0,5000);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        timer.cancel();
+        timer.purge();
+        backgroundView.pause();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        timer.cancel();
+        timer.purge();
+        backgroundView.pause();
     }
 }

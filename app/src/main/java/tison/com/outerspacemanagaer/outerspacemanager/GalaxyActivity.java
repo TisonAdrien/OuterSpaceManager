@@ -3,10 +3,12 @@ package tison.com.outerspacemanagaer.outerspacemanager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Point;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Display;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -43,6 +45,8 @@ public class GalaxyActivity extends AppCompatActivity implements View.OnClickLis
     private String token;
     private String pageGalaxy;
 
+    private BackgroundView backgroundView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,12 +59,11 @@ public class GalaxyActivity extends AppCompatActivity implements View.OnClickLis
         previousButton = (Button) findViewById(R.id.previousButtonGalaxy);
         previousButton.setOnClickListener(this);
 
-        LinearLayout rl = (LinearLayout) findViewById(R.id.bg_galaxy);
-        FlowingGradientClass grad = new FlowingGradientClass();
-        grad.setBackgroundResource(R.drawable.translate)
-                .onLinearLayout(rl)
-                .setTransitionDuration(4000)
-                .start();
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        backgroundView = (BackgroundView) findViewById(R.id.backgroundViewGalaxy);
+        backgroundView.animate(this, size.x, size.y);
 
         SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
         token = settings.getString("token","");
@@ -161,5 +164,23 @@ public class GalaxyActivity extends AppCompatActivity implements View.OnClickLis
 
         AlertDialog alert = builder.create();
         alert.show();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        backgroundView.pause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        backgroundView.pause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        backgroundView.resume();
     }
 }

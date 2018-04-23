@@ -2,9 +2,11 @@ package tison.com.outerspacemanagaer.outerspacemanager;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Point;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Display;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -39,18 +41,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static final String PREFS_NAME = "TOKEN_FILE";
     private String token;
 
+    private Timer timer;
+
+    private BackgroundView backgroundView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        LinearLayout rl = (LinearLayout) findViewById(R.id.bg_menu);
-        FlowingGradientClass grad = new FlowingGradientClass();
-        grad.setBackgroundResource(R.drawable.translate)
-                .onLinearLayout(rl)
-                .setTransitionDuration(4000)
-                .start();
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        backgroundView = (BackgroundView) findViewById(R.id.backgroundViewMain);
+        backgroundView.animate(this, size.x, size.y);
 
         txtPoints = (TextView) findViewById(R.id.textViewScore);
         txtUsername = (TextView) findViewById(R.id.textViewUsername);
@@ -72,35 +76,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
         token = settings.getString("token","");
-
-        final Retrofit retrofit= new Retrofit.Builder().baseUrl("https://outer-space-manager-staging.herokuapp.com").addConverterFactory(GsonConverterFactory.create()).build();
-        final Api service = retrofit.create(Api.class);
-
-        new Timer().scheduleAtFixedRate(new TimerTask(){
-            @Override
-            public void run() {
-                Call<UserResponse> request = service.GetUserInfo(token);
-
-                request.enqueue(new Callback<UserResponse>() {
-                    @Override
-                    public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
-                        if (response.code() != 200) {
-                            Toast.makeText(getApplicationContext(), "Une erreur est survenue !", Toast.LENGTH_LONG).show();
-                        } else {
-                            //Toast.makeText(getApplicationContext(), "Connection...", Toast.LENGTH_LONG).show();
-                            txtPoints.setText("Points : " + response.body().getPoints());
-                            txtUsername.setText(response.body().getUsername());
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<UserResponse> call, Throwable t) {
-                        Toast.makeText(getApplicationContext(), call.toString(), Toast.LENGTH_LONG).show();
-                        Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_LONG).show();
-                    }
-                });
-            }
-        },0,5000);
     }
 
     @Override
@@ -134,5 +109,56 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Intent myIntent = new Intent(getApplicationContext(), SearchActivity.class);
             startActivity(myIntent);
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        backgroundView.resume();
+        final Retrofit retrofit= new Retrofit.Builder().baseUrl("https://outer-space-manager-staging.herokuapp.com").addConverterFactory(GsonConverterFactory.create()).build();
+        final Api service = retrofit.create(Api.class);
+
+        timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask(){
+            @Override
+            public void run() {
+                Call<UserResponse> request = service.GetUserInfo(token);
+
+                request.enqueue(new Callback<UserResponse>() {
+                    @Override
+                    public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
+                        if (response.code() != 200) {
+                            Toast.makeText(getApplicationContext(), "Une erreur est survenue !", Toast.LENGTH_LONG).show();
+                        } else {
+                            //Toast.makeText(getApplicationContext(), "Connection...", Toast.LENGTH_LONG).show();
+                            txtPoints.setText("Points : " + response.body().getPoints());
+                            txtUsername.setText(response.body().getUsername());
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<UserResponse> call, Throwable t) {
+                        Toast.makeText(getApplicationContext(), call.toString(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+        },0,5000);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        timer.cancel();
+        timer.purge();
+        backgroundView.pause();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        timer.cancel();
+        timer.purge();
+        backgroundView.pause();
     }
 }
