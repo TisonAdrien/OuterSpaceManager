@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -38,8 +39,8 @@ public class GalaxyActivity extends AppCompatActivity implements View.OnClickLis
     private UserResponse[] listUsers;
     private ListView viewUsers;
 
-    private Button nextButton;
-    private Button previousButton;
+    private ImageButton nextButton;
+    private ImageButton previousButton;
 
     public static final String PREFS_NAME = "TOKEN_FILE";
     private String token;
@@ -54,9 +55,9 @@ public class GalaxyActivity extends AppCompatActivity implements View.OnClickLis
         viewUsers = (ListView) findViewById(R.id.listViewGalaxy);
         viewUsers.setOnItemClickListener(this);
 
-        nextButton = (Button) findViewById(R.id.nextButtonGalaxy);
+        nextButton = (ImageButton) findViewById(R.id.nextButtonGalaxy);
         nextButton.setOnClickListener(this);
-        previousButton = (Button) findViewById(R.id.previousButtonGalaxy);
+        previousButton = (ImageButton) findViewById(R.id.previousButtonGalaxy);
         previousButton.setOnClickListener(this);
 
         Display display = getWindowManager().getDefaultDisplay();

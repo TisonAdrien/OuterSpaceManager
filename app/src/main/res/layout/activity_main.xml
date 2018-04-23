@@ -44,7 +44,7 @@
         <Space
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minHeight="5dp"
+            android:minHeight="3dp"
             />
 
         <TextView
@@ -65,55 +65,79 @@
         <Space
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minHeight="40dp"
+            android:minHeight="15dp"
             />
 
-        <Button
+        <ImageButton
             android:id="@+id/buttonGeneral"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/general_view" />
+            android:layout_height="50dp"
+            android:layout_marginBottom="5dp"
+            android:background="@android:color/transparent"
+            android:scaleType="centerInside"
+            app:srcCompat="@drawable/vue_generale" />
 
-        <Button
+
+        <ImageButton
             android:id="@+id/buttonBuilding"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/building" />
+            android:layout_height="50dp"
+            android:layout_marginBottom="5dp"
+            android:background="@android:color/transparent"
+            android:scaleType="centerInside"
+            app:srcCompat="@drawable/batiments" />
 
-        <Button
+
+        <ImageButton
             android:id="@+id/buttonFlotte"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/flotte" />
+            android:layout_height="50dp"
+            android:layout_marginBottom="5dp"
+            android:background="@android:color/transparent"
+            android:scaleType="centerInside"
+            app:srcCompat="@drawable/flotte" />
 
-        <Button
+        <ImageButton
             android:id="@+id/buttonSearch"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/research" />
+            android:layout_height="50dp"
+            android:layout_marginBottom="5dp"
+            android:background="@android:color/transparent"
+            android:scaleType="centerInside"
+            app:srcCompat="@drawable/recherche" />
 
-        <Button
+        <ImageButton
             android:id="@+id/buttonChantier"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/chantier" />
+            android:layout_height="50dp"
+            android:layout_marginBottom="5dp"
+            android:background="@android:color/transparent"
+            android:scaleType="centerInside"
+            app:srcCompat="@drawable/chantier_spatial" />
 
-        <Button
+        <ImageButton
             android:id="@+id/buttonGalaxy"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/galaxy" />
+            android:layout_height="50dp"
+            android:layout_marginBottom="5dp"
+            android:background="@android:color/transparent"
+            android:scaleType="centerInside"
+            app:srcCompat="@drawable/galaxie" />
+
 
         <Space
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minHeight="20dp"
+            android:minHeight="30dp"
             />
 
-        <Button
+        <ImageButton
             android:id="@+id/buttonDisconnect"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/disconnect" />
+            android:layout_height="30dp"
+            android:background="@android:color/transparent"
+            android:scaleType="centerInside"
+            app:srcCompat="@drawable/deconnexion" />
+
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

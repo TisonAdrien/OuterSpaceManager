@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.view.Display;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,13 +30,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private TextView txtPoints;
     private TextView txtUsername;
-    private Button butDisconnect;
-    private Button butGeneral;
-    private Button butBuilding;
-    private Button butFlotte;
-    private Button butSearch;
-    private Button butChantier;
-    private Button butGalaxy;
+    private ImageButton butDisconnect;
+    private ImageButton butGeneral;
+    private ImageButton butBuilding;
+    private ImageButton butFlotte;
+    private ImageButton butSearch;
+    private ImageButton butChantier;
+    private ImageButton butGalaxy;
 
 
     public static final String PREFS_NAME = "TOKEN_FILE";
@@ -58,13 +59,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         txtPoints = (TextView) findViewById(R.id.textViewScore);
         txtUsername = (TextView) findViewById(R.id.textViewUsername);
-        butDisconnect = (Button) findViewById(R.id.buttonDisconnect);
-        butGeneral = (Button) findViewById(R.id.buttonGeneral);
-        butBuilding = (Button) findViewById(R.id.buttonBuilding);
-        butFlotte = (Button) findViewById(R.id.buttonFlotte);
-        butSearch = (Button) findViewById(R.id.buttonSearch);
-        butChantier = (Button) findViewById(R.id.buttonChantier);
-        butGalaxy = (Button) findViewById(R.id.buttonGalaxy);
+        butDisconnect = (ImageButton) findViewById(R.id.buttonDisconnect);
+        butGeneral = (ImageButton) findViewById(R.id.buttonGeneral);
+        butBuilding = (ImageButton) findViewById(R.id.buttonBuilding);
+        butFlotte = (ImageButton) findViewById(R.id.buttonFlotte);
+        butSearch = (ImageButton) findViewById(R.id.buttonSearch);
+        butChantier = (ImageButton) findViewById(R.id.buttonChantier);
+        butGalaxy = (ImageButton) findViewById(R.id.buttonGalaxy);
 
         butDisconnect.setOnClickListener(this);
         butGeneral.setOnClickListener(this);

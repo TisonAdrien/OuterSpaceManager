@@ -9,6 +9,7 @@ import android.view.Display;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,7 +37,7 @@ public class AttackActivity extends AppCompatActivity implements View.OnClickLis
     public EditText number3;
     public EditText number4;
 
-    public Button attackButton;
+    public ImageButton attackButton;
 
     public static final String PREFS_NAME = "TOKEN_FILE";
     private String token;
@@ -71,7 +72,7 @@ public class AttackActivity extends AppCompatActivity implements View.OnClickLis
         number3 = (EditText) findViewById(R.id.number3);
         number4 = (EditText) findViewById(R.id.number4);
 
-        attackButton = (Button) findViewById(R.id.btnAttack);
+        attackButton = (ImageButton) findViewById(R.id.btnAttack);
         attackButton.setOnClickListener(this);
 
     }

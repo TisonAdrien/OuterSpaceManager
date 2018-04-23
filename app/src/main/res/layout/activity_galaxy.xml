@@ -65,21 +65,26 @@
             android:layout_height="match_parent"
             android:orientation="horizontal">
 
-            <Button
+            <ImageButton
                 android:id="@+id/previousButtonGalaxy"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="45dp"
+                android:background="@android:color/transparent"
+                android:scaleType="centerInside"
                 android:layout_weight="1"
-                android:text="Previous"
-                android:visibility="invisible" />
+                android:visibility="invisible"
+                app:srcCompat="@drawable/previous" />
 
-            <Button
+            <ImageButton
                 android:id="@+id/nextButtonGalaxy"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="45dp"
                 android:layout_weight="1"
-                android:text="Next"
-                android:visibility="invisible" />
+                android:visibility="invisible"
+                android:background="@android:color/transparent"
+                android:scaleType="centerInside"
+                app:srcCompat="@drawable/next" />
+
         </LinearLayout>
 
     </LinearLayout>

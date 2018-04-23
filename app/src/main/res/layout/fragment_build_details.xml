@@ -92,13 +92,15 @@
 
     </LinearLayout>
 
-    <Button
+    <ImageButton
+        android:id="@+id/btnBuild"
+        android:layout_width="130dp"
+        android:layout_height="80dp"
+        android:scaleType="centerInside"
         android:visibility="invisible"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="Construire"
-        android:id="@+id/btnBuild"/>
+        android:background="@android:color/transparent"
+        app:srcCompat="@drawable/construire" />
 
     <ProgressBar
         android:id="@+id/pbPercentBuild"

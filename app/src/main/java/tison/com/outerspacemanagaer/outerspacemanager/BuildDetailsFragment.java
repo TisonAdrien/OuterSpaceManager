@@ -1,6 +1,7 @@
 package tison.com.outerspacemanagaer.outerspacemanager;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v4.app.Fragment;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -41,7 +43,7 @@ public class BuildDetailsFragment extends Fragment implements View.OnClickListen
     private TextView tvEffect;
     private TextView tvCost;
     private ImageView ivBuildingDetails;
-    private Button btnBuild;
+    private ImageButton btnBuild;
     private ProgressBar pbPercentBuild;
     public static final String PREFS_NAME = "TOKEN_FILE";
     private String token;
@@ -69,7 +71,8 @@ public class BuildDetailsFragment extends Fragment implements View.OnClickListen
         btnBuild.setOnClickListener(this);
         settings = this.getActivity().getSharedPreferences(PREFS_NAME, 0);
         token = settings.getString("token","");
-
+        building = new Building();
+        timeStartBuilding = Long.getLong("0");
         time = new Timer();
 
         return v;
@@ -85,7 +88,7 @@ public class BuildDetailsFragment extends Fragment implements View.OnClickListen
         this.building = building;
         timeStartBuilding = settings.getLong("timeStartConstruction"+building.getName(), 0);
 
-        DownLoadImageTask dl = new DownLoadImageTask(ivBuildingDetails);
+        DownLoadImageTask dl = new DownLoadImageTask(ivBuildingDetails, getActivity().getApplicationContext(), "");
         dl.execute(building.getImageUrl());
         tvNameBuilding.setText(building.getName());
         tvLevelBuilding.setText("Level : " + building.getLevel());
@@ -104,16 +107,11 @@ public class BuildDetailsFragment extends Fragment implements View.OnClickListen
         tvMineralCost.setText(costMineral.toString() + " minéraux");
         tvGasCost.setText(costGas.toString() + " gaz");
         tvAmountOfEffect.setText("Bonus : +" + amountEffect.toString() + " ");
-        if (building.getEffect() != null && building.getEffect() != "") {
-            String resource = getResources().getString( getResources().getIdentifier(building.getEffect(), "string", getActivity().getPackageName()));
-            tvEffect.setText(resource);
-        } else {
-            tvEffect.setText("Ressources");
-        }
+        tvEffect.setText(building.getEffect());
         if (building.getBuilding().equals("true"))
         {
             tvTimeToBuild.append(" (en construction)");
-            btnBuild.setText("En construction");
+            btnBuild.setColorFilter(Color.argb(150, 0, 0, 0));
             btnBuild.setEnabled(false);
             if (timeStartBuilding != 0) {
                 this.updateProgressBar();
@@ -121,11 +119,13 @@ public class BuildDetailsFragment extends Fragment implements View.OnClickListen
         }
         else
         {
-            btnBuild.setText("Construire");
+            btnBuild.setColorFilter(0);
             btnBuild.setEnabled(true);
         }
         btnBuild.setVisibility(View.VISIBLE);
         tvCost.setVisibility(View.VISIBLE);
+
+        this.updateProgressBar();
     }
 
     public void updateProgressBar()
@@ -139,11 +139,12 @@ public class BuildDetailsFragment extends Fragment implements View.OnClickListen
                 @Override
                 public void run() {
                     if (getActivity()!=null){
+                        timeStartBuilding = settings.getLong("timeStartConstruction"+BuildDetailsFragment.this.building.getName(), 0);
                         Log.d("dsfds", "Timer execution" + time.toString());
-                        Integer level0 = Integer.parseInt(building.getTimeToBuildLevel0());
-                        Integer byLevel = Integer.parseInt(building.getTimeToBuildByLevel());
-                        Integer level = Integer.parseInt(building.getLevel());
-                        Integer times =  level0 + (level * byLevel);
+                        Integer level0 = Integer.parseInt(BuildDetailsFragment.this.building.getTimeToBuildLevel0());
+                        Integer byLevel = Integer.parseInt(BuildDetailsFragment.this.building.getTimeToBuildByLevel());
+                        Integer level = Integer.parseInt(BuildDetailsFragment.this.building.getLevel());
+                        final Integer times =  level0 + (level * byLevel);
                         Integer minutes = (int) Math.floor(times / 60);
                         Integer seconds = (int) Math.floor(times % 60);
 
@@ -165,15 +166,14 @@ public class BuildDetailsFragment extends Fragment implements View.OnClickListen
                             time.cancel();
                             canceled = true;
                             time.purge();
-                            Log.d("dsfds", "sfdsffdssfdsfddsf");
                             BuildDetailsFragment.this.refreshBuild();
                             settings.edit().remove("timeStartConstruction"+building.getName()).apply();
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    BuildDetailsFragment.this.fillContent(BuildDetailsFragment.this.building);
+                                    BuildDetailsFragment.this.fillContent(building);
                                     pbPercentBuild.setVisibility(View.INVISIBLE);
-                                    btnBuild.setText("Construire");
+                                    btnBuild.setColorFilter(0);
                                     btnBuild.setEnabled(true);
                                 }
                             });

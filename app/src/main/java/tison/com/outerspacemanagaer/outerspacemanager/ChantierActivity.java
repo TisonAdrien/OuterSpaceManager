@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.Display;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -28,8 +29,8 @@ public class ChantierActivity extends AppCompatActivity implements View.OnClickL
 
     private ListView listViewReport;
 
-    private Button nextButton;
-    private Button previousButton;
+    private ImageButton nextButton;
+    private ImageButton previousButton;
 
     private Report[] reports;
 
@@ -44,9 +45,9 @@ public class ChantierActivity extends AppCompatActivity implements View.OnClickL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chantier);
 
-        nextButton = (Button) findViewById(R.id.nextButtonChantier);
+        nextButton = (ImageButton) findViewById(R.id.nextButtonChantier);
         nextButton.setOnClickListener(this);
-        previousButton = (Button) findViewById(R.id.previousButtonChantier);
+        previousButton = (ImageButton) findViewById(R.id.previousButtonChantier);
         previousButton.setOnClickListener(this);
 
         Display display = getWindowManager().getDefaultDisplay();

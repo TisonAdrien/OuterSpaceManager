@@ -83,7 +83,6 @@ public class BuildingActivity extends AppCompatActivity implements AdapterView.O
         {
             BuildDetailsFragment fragB = (BuildDetailsFragment)getSupportFragmentManager().findFragmentById(R.id.fragDetails);
             fragB.fillContent(buildings[position]);
-            fragB.updateProgressBar();
         }else {
             Retrofit retrofit = new Retrofit.Builder().baseUrl("https://outer-space-manager-staging.herokuapp.com").addConverterFactory(GsonConverterFactory.create()).build();
             Api service = retrofit.create(Api.class);

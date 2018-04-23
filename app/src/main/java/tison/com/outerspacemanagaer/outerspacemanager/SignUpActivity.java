@@ -10,6 +10,7 @@ import android.view.Display;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,10 +27,10 @@ import com.dynamitechetan.flowinggradient.FlowingGradientClass;
 
 public class SignUpActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private Button btnValider;
+    private ImageButton btnValider;
     private EditText inputUsername;
     private EditText inputPassword;
-    private Button btnCreate;
+    private ImageButton btnCreate;
     private String token;
 
     public static final String PREFS_NAME = "TOKEN_FILE";
@@ -44,8 +45,8 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
 
-        btnValider = (Button) findViewById(R.id.btnValider);
-        btnCreate = (Button) findViewById(R.id.btnAjouter);
+        btnValider = (ImageButton) findViewById(R.id.btnValider);
+        btnCreate = (ImageButton) findViewById(R.id.btnAjouter);
         inputUsername = (EditText) findViewById(R.id.inputUsername);
         inputPassword = (EditText) findViewById(R.id.inputPassword);
 

@@ -8,6 +8,7 @@ import android.view.Display;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -23,11 +24,11 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class CreateAccountActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private Button btnValider;
+    private ImageButton btnValider;
     private EditText inputEmail;
     private EditText inputUsername;
     private EditText inputPassword;
-    private Button btnConnect;
+    private ImageButton btnConnect;
 
     private BackgroundView backgroundView;
 
@@ -36,8 +37,8 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_account);
 
-        btnConnect = (Button) findViewById(R.id.btnConnect);
-        btnValider = (Button) findViewById(R.id.btnValider);
+        btnConnect = (ImageButton) findViewById(R.id.btnConnect);
+        btnValider = (ImageButton) findViewById(R.id.btnValider);
         inputUsername = (EditText) findViewById(R.id.inputUsername);
         inputPassword = (EditText) findViewById(R.id.inputPassword);
         inputEmail = (EditText) findViewById(R.id.inputEmail);
