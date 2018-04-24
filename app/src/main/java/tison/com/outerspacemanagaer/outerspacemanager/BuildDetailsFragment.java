@@ -51,7 +51,6 @@ public class BuildDetailsFragment extends Fragment implements View.OnClickListen
     private Long timeStartBuilding;
     private SharedPreferences settings;
     private Timer time;
-    private boolean canceled = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -73,8 +72,6 @@ public class BuildDetailsFragment extends Fragment implements View.OnClickListen
         token = settings.getString("token","");
         building = new Building();
         timeStartBuilding = Long.getLong("0");
-        time = new Timer();
-
         return v;
     }
 
@@ -103,7 +100,7 @@ public class BuildDetailsFragment extends Fragment implements View.OnClickListen
         Integer costGas = Integer.parseInt(building.getGasCostLevel0()) + ( Integer.parseInt(building.getGasCostByLevel()) * Integer.parseInt(building.getLevel()));
         Integer amountEffect = Integer.parseInt(building.getAmountOfEffectLevel0()) + (Integer.parseInt(building.getAmountOfEffectByLevel()) * Integer.parseInt(building.getLevel()));
 
-        tvTimeToBuild.setText("Temps de build : " + seconds.toString() + ":" + minutes.toString() + " minutes");
+        tvTimeToBuild.setText("Temps de build : " + minutes.toString() + ":" + seconds.toString() + " minutes");
         tvMineralCost.setText(costMineral.toString() + " minéraux");
         tvGasCost.setText(costGas.toString() + " gaz");
         tvAmountOfEffect.setText("Bonus : +" + amountEffect.toString() + " ");
@@ -121,33 +118,28 @@ public class BuildDetailsFragment extends Fragment implements View.OnClickListen
         {
             btnBuild.setColorFilter(0);
             btnBuild.setEnabled(true);
+            pbPercentBuild.setVisibility(View.INVISIBLE);
         }
         btnBuild.setVisibility(View.VISIBLE);
         tvCost.setVisibility(View.VISIBLE);
 
+        setTimer();
         this.updateProgressBar();
     }
 
     public void updateProgressBar()
     {
-        if (this.building.getBuilding().equals("true"))
+        if (this.building.getBuilding().equals("true") && timeStartBuilding != 0)
         {
-            if (canceled) {
-                time = new Timer();
-            }
+            setTimer();
             time.scheduleAtFixedRate(new TimerTask(){
                 @Override
                 public void run() {
                     if (getActivity()!=null){
-                        timeStartBuilding = settings.getLong("timeStartConstruction"+BuildDetailsFragment.this.building.getName(), 0);
-                        Log.d("dsfds", "Timer execution" + time.toString());
                         Integer level0 = Integer.parseInt(BuildDetailsFragment.this.building.getTimeToBuildLevel0());
                         Integer byLevel = Integer.parseInt(BuildDetailsFragment.this.building.getTimeToBuildByLevel());
                         Integer level = Integer.parseInt(BuildDetailsFragment.this.building.getLevel());
                         final Integer times =  level0 + (level * byLevel);
-                        Integer minutes = (int) Math.floor(times / 60);
-                        Integer seconds = (int) Math.floor(times % 60);
-
                         pbPercentBuild.setMax(times);
                         Long timeNow = new Date().getTime() / 1000;
                         final Long difference = timeNow - timeStartBuilding;
@@ -164,10 +156,10 @@ public class BuildDetailsFragment extends Fragment implements View.OnClickListen
 
                         } else {
                             time.cancel();
-                            canceled = true;
                             time.purge();
                             BuildDetailsFragment.this.refreshBuild();
                             settings.edit().remove("timeStartConstruction"+building.getName()).apply();
+                            timeStartBuilding = Long.parseLong("0");
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -184,11 +176,22 @@ public class BuildDetailsFragment extends Fragment implements View.OnClickListen
         }
     }
 
+    public void setTimer(){
+        // Reset the timer
+        try{
+            time.cancel();
+            time.purge();
+        }catch (Exception e){
+            // Do nothing
+        }
+        time = new Timer();
+    }
+
     @Override
     public void onPause() {
         super.onPause();
         time.cancel();
-        canceled = true;
+        time.purge();
     }
 
     private void refreshBuild()
@@ -203,6 +206,7 @@ public class BuildDetailsFragment extends Fragment implements View.OnClickListen
         Retrofit retrofit= new Retrofit.Builder().baseUrl("https://outer-space-manager-staging.herokuapp.com").addConverterFactory(GsonConverterFactory.create()).build();
         Api service = retrofit.create(Api.class);
         Call<CodeResponse> request = service.CreateBuilding(token, building.getBuildingId());
+        final BuildDetailsFragment buildDetailsFragment = BuildDetailsFragment.this;
         request.enqueue(new Callback<CodeResponse>() {
             @Override
             public void onResponse(Call<CodeResponse> call, Response<CodeResponse> response) {
@@ -216,6 +220,7 @@ public class BuildDetailsFragment extends Fragment implements View.OnClickListen
                         editor.putLong("timeStartConstruction"+building.getName(), timeConstruct);
                         editor.commit();
                         building.setBuilding("true");
+                        buildDetailsFragment.fillContent(building);
                         break;
                     case 401 :
                         String res = "";

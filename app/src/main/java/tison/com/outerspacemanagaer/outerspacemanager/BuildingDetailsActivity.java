@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 
 import com.google.gson.Gson;
 
@@ -18,7 +19,7 @@ import java.util.TimerTask;
 
 public class BuildingDetailsActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private Button btnRetourBuilding;
+    private ImageButton btnRetourBuilding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
