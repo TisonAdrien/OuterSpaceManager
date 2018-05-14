@@ -68,8 +68,7 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
                     if(response.code() != 200){
                         switch (response.code()){
                             case 401:
-                                //Pas assez de ressources
-                                Toast.makeText(getApplicationContext(), "Vous n'avez pas assez de ressources", Toast.LENGTH_LONG).show();
+                                Toast.makeText(getApplicationContext(), "Vous devez remplir tout les champs correctement !", Toast.LENGTH_LONG).show();
                                 break;
                             case 400 :
                                 Toast.makeText(getApplicationContext(), "Nom de compte ou mail déjà utilisé", Toast.LENGTH_LONG).show();
