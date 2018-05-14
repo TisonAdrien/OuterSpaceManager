@@ -7,8 +7,11 @@ import android.graphics.Point;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Display;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -34,10 +37,10 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class GalaxyActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener{
+public class GalaxyActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener, RecyclerView.OnItemTouchListener {
 
     private UserResponse[] listUsers;
-    private ListView viewUsers;
+    private RecyclerView viewUsers;
 
     private ImageButton nextButton;
     private ImageButton previousButton;
@@ -52,8 +55,10 @@ public class GalaxyActivity extends AppCompatActivity implements View.OnClickLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_galaxy);
-        viewUsers = (ListView) findViewById(R.id.listViewGalaxy);
-        viewUsers.setOnItemClickListener(this);
+        viewUsers = (RecyclerView) findViewById(R.id.recyclerViewGalaxy);
+        viewUsers.setLayoutManager(new LinearLayoutManager(this));
+        viewUsers.addOnItemTouchListener(this);
+
 
         nextButton = (ImageButton) findViewById(R.id.nextButtonGalaxy);
         nextButton.setOnClickListener(this);
@@ -118,7 +123,7 @@ public class GalaxyActivity extends AppCompatActivity implements View.OnClickLis
 
                     //viewUsers.setAdapter(new ArrayAdapter(getApplicationContext(),  android.R.layout.simple_list_item_1, listUsers));
                     findViewById(R.id.loadingPanelGalaxy).setVisibility(View.GONE);
-                    UserAdapter adapter = new UserAdapter(getApplicationContext(), listUsers );
+                    UserAdapter adapter = new UserAdapter(listUsers);
                     viewUsers.setAdapter(adapter);
                 }
             }
@@ -209,5 +214,20 @@ public class GalaxyActivity extends AppCompatActivity implements View.OnClickLis
         startActivity(myIntent);
 
         super.onBackPressed();
+    }
+
+    @Override
+    public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
+        return false;
+    }
+
+    @Override
+    public void onTouchEvent(RecyclerView rv, MotionEvent e) {
+
+    }
+
+    @Override
+    public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+
     }
 }

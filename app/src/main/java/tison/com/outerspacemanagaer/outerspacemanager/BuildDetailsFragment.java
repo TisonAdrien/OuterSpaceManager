@@ -173,6 +173,8 @@ public class BuildDetailsFragment extends Fragment implements View.OnClickListen
                     }
                 }
             },0,1000);
+        }else{
+            pbPercentBuild.setVisibility(View.INVISIBLE);
         }
     }
 

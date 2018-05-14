@@ -3,6 +3,7 @@ package tison.com.outerspacemanagaer.outerspacemanager;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,23 +17,38 @@ import java.util.List;
  * Created by atison on 23/01/2018.
  */
 
-public class UserAdapter extends ArrayAdapter<UserResponse> {
+public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
 
-    private final Context context;
     private final UserResponse[] values;
-    public UserAdapter(Context context, UserResponse[] values) {
-        super(context,R.layout.activity_galaxy, values);
-        this.context = context;
-        this.values = values;
-    }
+
+    @NonNull
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View rowView = inflater.inflate(R.layout.row_user, parent, false);
-        TextView textView = (TextView) rowView.findViewById(R.id.labelUser);
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        TextView v = (TextView) LayoutInflater.from(parent.getContext()).inflate(R.layout.row_user, parent, false);
+        ViewHolder vh = new ViewHolder(v);
+        return vh;
+    }
 
-        textView.setText(values[position].toString());
+    @Override
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        holder.mTextView.setText(values[position].toString());
+    }
 
-        return rowView;
+    @Override
+    public int getItemCount() {
+        return values.length;
+    }
+
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        // each data item is just a string in this case
+        public TextView mTextView;
+        public ViewHolder(TextView v) {
+            super(v);
+            mTextView = v;
+        }
+    }
+
+    public UserAdapter(UserResponse[] values) {
+        this.values = values;
     }
 }
