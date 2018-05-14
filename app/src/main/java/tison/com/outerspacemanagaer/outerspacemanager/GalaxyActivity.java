@@ -123,7 +123,7 @@ public class GalaxyActivity extends AppCompatActivity implements View.OnClickLis
 
                     //viewUsers.setAdapter(new ArrayAdapter(getApplicationContext(),  android.R.layout.simple_list_item_1, listUsers));
                     findViewById(R.id.loadingPanelGalaxy).setVisibility(View.GONE);
-                    UserAdapter adapter = new UserAdapter(listUsers);
+                    UserAdapter adapter = new UserAdapter(GalaxyActivity.this, listUsers);
                     viewUsers.setAdapter(adapter);
                 }
             }
