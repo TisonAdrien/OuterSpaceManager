@@ -1,5 +1,6 @@
 package tison.com.outerspacemanagaer.outerspacemanager;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.support.v7.app.AppCompatActivity;
@@ -67,7 +68,27 @@ public class GeneralActivity extends AppCompatActivity {
                     public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
                         if(response.code() != 200){
                             findViewById(R.id.loadingPanelGeneral).setVisibility(View.GONE);
-                            Toast.makeText(getApplicationContext(), "Une erreur est survenue !", Toast.LENGTH_LONG).show();
+                            switch (response.code()){
+                                case 401:
+                                    //Pas assez de ressources
+                                    Toast.makeText(getApplicationContext(), "Vous n'avez pas assez de ressources", Toast.LENGTH_LONG).show();
+                                    break;
+                                case 403 :
+                                    SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+                                    settings.edit().remove("token").apply();
+                                    Toast.makeText(getApplicationContext(), "Veuillez vous réauthentifier s'il vous plait", Toast.LENGTH_LONG).show();
+                                    Intent myIntent = new Intent(getApplicationContext(), SignUpActivity.class);
+                                    startActivity(myIntent);
+                                    break;
+                                case 500:
+                                    //Erreur serveur
+                                    Toast.makeText(getApplicationContext(), "Une erreur interne s'est produite, réessayez plus tard...", Toast.LENGTH_LONG).show();
+                                    break;
+                                default:
+                                    //Stop crack
+                                    Toast.makeText(getApplicationContext(), "Une erreur s'est produite, elle vient de vous. Vous êtes une erreur.", Toast.LENGTH_LONG).show();
+                                    break;
+                            }
                         }else{
                             //Toast.makeText(getApplicationContext(), "Connection...", Toast.LENGTH_LONG).show();
                             UserResponse user = response.body();

@@ -85,12 +85,26 @@ public class GalaxyActivity extends AppCompatActivity implements View.OnClickLis
             @Override
             public void onResponse(Call<UserTable> call, Response<UserTable> response) {
                 if(response.code() != 200){
-                    //Toast.makeText(getApplicationContext(), "Une erreur est survenue !", Toast.LENGTH_LONG).show();
-                    findViewById(R.id.loadingPanelGalaxy).setVisibility(View.GONE);
-                    try {
-                        Toast.makeText(getApplicationContext(), response.errorBody().string(), Toast.LENGTH_LONG).show();
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                    switch (response.code()){
+                        case 401:
+                            //Pas assez de ressources
+                            Toast.makeText(getApplicationContext(), "Vous n'avez pas assez de ressources", Toast.LENGTH_LONG).show();
+                            break;
+                        case 403 :
+                            SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+                            settings.edit().remove("token").apply();
+                            Toast.makeText(getApplicationContext(), "Veuillez vous réauthentifier s'il vous plait", Toast.LENGTH_LONG).show();
+                            Intent myIntent = new Intent(getApplicationContext(), SignUpActivity.class);
+                            startActivity(myIntent);
+                            break;
+                        case 500:
+                            //Erreur serveur
+                            Toast.makeText(getApplicationContext(), "Une erreur interne s'est produite, réessayez plus tard...", Toast.LENGTH_LONG).show();
+                            break;
+                        default:
+                            //Stop crack
+                            Toast.makeText(getApplicationContext(), "Une erreur s'est produite, elle vient de vous. Vous êtes une erreur.", Toast.LENGTH_LONG).show();
+                            break;
                     }
                 }else{
                     //Toast.makeText(getApplicationContext(), "Connection...", Toast.LENGTH_LONG).show();
@@ -182,5 +196,18 @@ public class GalaxyActivity extends AppCompatActivity implements View.OnClickLis
     protected void onResume() {
         super.onResume();
         backgroundView.resume();
+    }
+
+    @Override
+    public void onBackPressed() {
+        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putString("pageGalaxy","0");
+        editor.commit();
+
+        Intent myIntent = new Intent(getApplicationContext(), MainActivity.class);
+        startActivity(myIntent);
+
+        super.onBackPressed();
     }
 }

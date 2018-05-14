@@ -1,6 +1,7 @@
 package tison.com.outerspacemanagaer.outerspacemanager;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -30,6 +31,7 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
     private EditText inputPassword;
     private ImageButton btnConnect;
 
+    public static final String PREFS_NAME = "TOKEN_FILE";
     private BackgroundView backgroundView;
 
     @Override
@@ -64,16 +66,53 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
                 @Override
                 public void onResponse(Call<AuthResponse> call, Response<AuthResponse> response) {
                     if(response.code() != 200){
-                        Toast.makeText(getApplicationContext(), "L'utilisateur existe déjà !", Toast.LENGTH_LONG).show();
-                        /*
-                        try {
-                            Toast.makeText(getApplicationContext(), response.errorBody().string(), Toast.LENGTH_LONG).show();
-                        } catch (IOException e) {
-                            e.printStackTrace();
+                        switch (response.code()){
+                            case 401:
+                                //Pas assez de ressources
+                                Toast.makeText(getApplicationContext(), "Vous n'avez pas assez de ressources", Toast.LENGTH_LONG).show();
+                                break;
+                            case 400 :
+                                Toast.makeText(getApplicationContext(), "Nom de compte ou mail déjà utilisé", Toast.LENGTH_LONG).show();
+                                break;
+                            case 500:
+                                //Erreur serveur
+                                Toast.makeText(getApplicationContext(), "Une erreur interne s'est produite, réessayez plus tard...", Toast.LENGTH_LONG).show();
+                                break;
+                            default:
+                                //Stop crack
+                                Toast.makeText(getApplicationContext(), "Une erreur s'est produite, elle vient de vous. Vous êtes une erreur.", Toast.LENGTH_LONG).show();
+                                break;
                         }
-                        */
                     }else{
                         Toast.makeText(getApplicationContext(), "Votre compte a bien été créé !", Toast.LENGTH_LONG).show();
+
+                        Retrofit retrofit2 = new Retrofit.Builder().baseUrl("https://outer-space-manager-staging.herokuapp.com").addConverterFactory(GsonConverterFactory.create()).build();
+                        Api service2 = retrofit2.create(Api.class);
+                        Call<AuthResponse> request2 = service2.Connection(new User(inputUsername.getText().toString(), inputPassword.getText().toString(), ""));
+                        request2.enqueue(new Callback<AuthResponse>() {
+                            @Override
+                            public void onResponse(Call<AuthResponse> call, Response<AuthResponse> response) {
+                                if(response.code() != 200){
+                                    Toast.makeText(getApplicationContext(), "Identifiant ou mot de passe incorrect", Toast.LENGTH_LONG).show();
+                                }else{
+                                    SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+                                    SharedPreferences.Editor editor = settings.edit();
+                                    editor.putString("token", response.body().getToken());
+                                    // Commit the edits!
+                                    editor.commit();
+
+                                    Intent myIntent = new Intent(getApplicationContext(), MainActivity.class);
+                                    startActivity(myIntent);
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<AuthResponse> call, Throwable t) {
+                                Toast.makeText(getApplicationContext(), "Aucune réponse, vérifiez votre connection internet", Toast.LENGTH_LONG).show();
+                            }
+                        });
+
+
                     }
                 }
 

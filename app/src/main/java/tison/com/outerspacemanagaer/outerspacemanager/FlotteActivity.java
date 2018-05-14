@@ -189,12 +189,26 @@ public class FlotteActivity extends AppCompatActivity implements AdapterView.OnI
                     @Override
                     public void onResponse(Call<Ships> call, Response<Ships> response) {
                         if (response.code() != 200) {
-                            Toast.makeText(getApplicationContext(), "Une erreur est survenue !", Toast.LENGTH_LONG).show();
-
-                            try {
-                                Toast.makeText(getApplicationContext(), response.errorBody().string(), Toast.LENGTH_LONG).show();
-                            } catch (IOException e) {
-                                e.printStackTrace();
+                            switch (response.code()){
+                                case 401:
+                                    //Pas assez de ressources
+                                    Toast.makeText(getApplicationContext(), "Vous n'avez pas assez de ressources", Toast.LENGTH_LONG).show();
+                                    break;
+                                case 403 :
+                                    SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+                                    settings.edit().remove("token").apply();
+                                    Toast.makeText(getApplicationContext(), "Veuillez vous réauthentifier s'il vous plait", Toast.LENGTH_LONG).show();
+                                    Intent myIntent = new Intent(getApplicationContext(), SignUpActivity.class);
+                                    startActivity(myIntent);
+                                    break;
+                                case 500:
+                                    //Erreur serveur
+                                    Toast.makeText(getApplicationContext(), "Une erreur interne s'est produite, réessayez plus tard...", Toast.LENGTH_LONG).show();
+                                    break;
+                                default:
+                                    //Stop crack
+                                    Toast.makeText(getApplicationContext(), "Une erreur s'est produite, elle vient de vous. Vous êtes une erreur.", Toast.LENGTH_LONG).show();
+                                    break;
                             }
                         } else {
                             flotte_empty = response.body().getShips();

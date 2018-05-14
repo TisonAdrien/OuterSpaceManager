@@ -79,10 +79,26 @@ public class ChantierActivity extends AppCompatActivity implements View.OnClickL
             public void onResponse(Call<Reports> call, Response<Reports> response) {
                 if(response.code() != 200){
                     findViewById(R.id.loadingPanelChantier).setVisibility(View.GONE);
-                    try {
-                        Toast.makeText(getApplicationContext(), response.errorBody().string(), Toast.LENGTH_LONG).show();
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                    switch (response.code()){
+                        case 401:
+                            //Pas assez de ressources
+                            Toast.makeText(getApplicationContext(), "Vous n'avez pas assez de ressources", Toast.LENGTH_LONG).show();
+                            break;
+                        case 403 :
+                            SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+                            settings.edit().remove("token").apply();
+                            Toast.makeText(getApplicationContext(), "Veuillez vous réauthentifier s'il vous plait", Toast.LENGTH_LONG).show();
+                            Intent myIntent = new Intent(getApplicationContext(), SignUpActivity.class);
+                            startActivity(myIntent);
+                            break;
+                        case 500:
+                            //Erreur serveur
+                            Toast.makeText(getApplicationContext(), "Une erreur interne s'est produite, réessayez plus tard...", Toast.LENGTH_LONG).show();
+                            break;
+                        default:
+                            //Stop crack
+                            Toast.makeText(getApplicationContext(), "Une erreur s'est produite, elle vient de vous. Vous êtes une erreur.", Toast.LENGTH_LONG).show();
+                            break;
                     }
                 }else{
                     reports = response.body().getReports();
@@ -140,4 +156,19 @@ public class ChantierActivity extends AppCompatActivity implements View.OnClickL
         super.onResume();
         backgroundView.resume();
     }
+
+
+    @Override
+    public void onBackPressed() {
+        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putString("pageChantier","0");
+        editor.commit();
+
+        Intent myIntent = new Intent(getApplicationContext(), MainActivity.class);
+        startActivity(myIntent);
+
+        super.onBackPressed();
+    }
+
 }
