@@ -22,6 +22,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -128,39 +129,34 @@ public class AttackActivity extends AppCompatActivity implements View.OnClickLis
                             Toast.makeText(getApplicationContext(), "Une erreur s'est produite, elle vient de vous. Vous êtes une erreur.", Toast.LENGTH_LONG).show();
                             break;
                     }
-                }else{
+                }else {
                     Calendar currentDate = Calendar.getInstance();
-                    SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+                    SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss", Locale.FRANCE);
                     String dateNow = sdf.format(currentDate.getTime());
-                    Date today =  new Date(dateNow);
+                    Date today = new Date(dateNow);
                     Date attackDate = new Date(Long.parseLong(response.body().getAttackTime()));
                     try {
                         attackDate = (Date) sdf.parse("MM/dd/yyyy HH:mm:ss");
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
-                    long numberOfMiliSeconds=(long)((attackDate.getTime()-today.getTime()));
-                    if (numberOfMiliSeconds <= 0)
-                    {
+                    long numberOfMiliSeconds = (long) ((attackDate.getTime() - today.getTime()));
+                    if (numberOfMiliSeconds <= 0) {
                         Toast.makeText(getApplicationContext(), "Vous pouvez voir le résultat de l'attaque dès maintenant !", Toast.LENGTH_SHORT).show();
-                    }
-                    else
-                    {
+                    } else {
                         String hours = new SimpleDateFormat("HH").format(new Date(numberOfMiliSeconds));
                         String minutes = new SimpleDateFormat("mm").format(new Date(numberOfMiliSeconds));
                         String seconds = new SimpleDateFormat("ss").format(new Date(numberOfMiliSeconds));
                         String toShow = "L'attaque à été lancée : ";
-                        if (!hours.equals("00"))
-                        {
+                        if (!hours.equals("00")) {
                             toShow += hours + " h ";
                         }
-                        if (!minutes.equals("00") || !hours.equals("00"))
-                        {
+                        if (!minutes.equals("00") || !hours.equals("00")) {
                             toShow += minutes + " min ";
                         }
                         toShow += seconds + " sec ";
                         toShow += "avant le résultat !";
-                        Toast.makeText(getApplicationContext(),  toShow, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), toShow, Toast.LENGTH_SHORT).show();
                     }
                     Intent myIntent = new Intent(getApplicationContext(), MainActivity.class);
                     startActivity(myIntent);
